@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chatbox</title>
+    <link rel="stylesheet" href="chatbox.css">
+    <script type="text/javascript" src="chatbox.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
+        integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+</head>
+
+<body>
+    <div class="centering-container">
+        <div class="extension-container">
+            <!--Upper Content-->
+            <div class="upper-content-container">
+                <div class="title-logo-container">
+                    <div class="logo">
+                        <img src="logo.png" height="50px" width="50px">
+                    </div>
+                    <div class="title">
+                        <h1>ClassInsight</h1>
+                    </div>
+                </div>
+                <div class="other-actions-container">
+                    <button class="btnReset">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!--Main Content-->
+            <div class="main-content-container">
+                <div class="need-transcribe url-container">
+                    <input type="text" class="url-input">
+                    <button class="btn-transcribe" title="Transcribe" onclick="transcribeVideo()">
+                        <i class="fa fa-language"></i>
+                    </button>
+                </div>
+
+                <div class="no-transcribe chatbox-container">
+                    <div class="conversation-container">
+                        <div class="system-response">
+                            How can I Help you today? How can I Help you today?
+                            <span class="system-timestamp">11:03</span>
+                        </div>
+                        <div class="user-response">
+                            I will like to know more about jesus.
+                            <span class="user-timestamp">11:03</span>
+                        </div>
+                        <div class="system-response">
+                            How can I Help you today? How can I Help you today?
+                            <span class="system-timestamp">11:03</span>
+                        </div>
+                        <div class="user-response">
+                            I will like to know more about jesus.
+                            <span class="user-timestamp">11:03</span>
+                        </div>
+                        <div class="system-response">
+                            How can I Help you today? How can I Help you today?
+                            <span class="system-timestamp">11:03</span>
+                        </div>
+                        <div class="user-response">
+                            I will like to know more about jesus.
+                            <span class="user-timestamp">11:03</span>
+                        </div>
+                        <div class="system-response">
+                            How can I Help you today? How can I Help you today?
+                            <span class="system-timestamp">11:03</span>
+                        </div>
+                        <div class="user-response">
+                            I will like to know more about jesus.
+                            <span class="user-timestamp">11:03</span>
+                        </div>
+                    </div>
+                    <div class="prompt-container">
+                        <textarea type="text" class="prompt-input" id="userInput"></textarea>
+                        <button class="btn-send" onclick="addUserPrompt()">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="width: 100%;">
+            <!--Lower Container-->
+            <div class="lower-content-container">
+                <a href="#">Need Help? Explore the Docs Here!</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
