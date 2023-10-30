@@ -1,19 +1,71 @@
-window.onload = function () {
-    const videoTranscriptLinkElement = document.querySelector("video > track");
+async function fetchData() {
+    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: getVideoTranscriptLink,
+    });
+}
+
+var videoTranscriptLink = "";
+
+function getVideoTranscriptLink() {
+    videoTranscriptLink = document.querySelector("video > track").src;
+    console.log(videoTranscriptLink);
+    chrome.storage.sync.set({ videoTranscriptLink });
+}
+
+function handleVideoTranscript(videoTranscriptLinkElement) {
     const needTranscribeURL = document.querySelector(".need-transcribe");
 
     if (videoTranscriptLinkElement === null || videoTranscriptLinkElement.src === null) {
-        needTranscribeURL.style.display = "block"; //Change Back to block later
+        needTranscribeURL.style.display = "block"; // Change back to "block" later
     } else {
-        videoTranscriptLinkElement = videoTranscriptLinkElement.src;
-        videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, originalLink.indexOf("streamContent") + "streamContent".length) + "&format=json&applymediaedits=false";
+        videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, videoTranscriptLinkElement.indexOf("streamContent") + "streamContent".length) + "?format=json&applymediaedits=false";
+        handleTranscriptJSON(videoTranscriptLinkElement);
         needTranscribeURL.style.display = "none";
 
-        //Add in function to get the json to be passed in as context
+        // Add a function to get the JSON to be passed in as context
         var tempContextHolder = "";
         startConversation(tempContextHolder);
     }
 }
+
+function handleTranscriptJSON(videoTranscriptLinkElement) {
+
+    // Fetch the JSON data from the API
+    fetch(videoTranscriptLinkElement)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
+            return response.json(); // Parse the response as JSON
+        })
+        .then((jsonData) => {
+            // Once you have the JSON data, you can process it as shown in the previous example
+            const filteredEntries = [];
+
+            for (const entry of jsonData.entries) {
+                const { text, startOffset, endOffset } = entry;
+                const filteredEntry = { text, startOffset, endOffset };
+                filteredEntries.push(filteredEntry);
+            }
+
+            // Now, you can work with the filteredEntries array
+            console.log(filteredEntries);
+        })
+        .catch((error) => {
+            console.error(`Fetch error: ${error}`);
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetchData();
+
+    chrome.storage.sync.get("videoTranscriptLink", ({ videoTranscriptLink }) => {
+        handleVideoTranscript(videoTranscriptLink);
+    });
+});
 
 function transcribeVideo() {
     //Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
@@ -32,7 +84,7 @@ function transcribeVideo() {
 
 function startConversation(context) {
     const noTranscribe = document.querySelector(".chatbox-container");
-    const status = "failed";
+    const status = "success";
 
     if (status === "success") {
         noTranscribe.style.display = "block";

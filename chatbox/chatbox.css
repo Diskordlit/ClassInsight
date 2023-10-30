@@ -29,6 +29,7 @@ body {
     padding: 20px 16px;
     max-height: 606px;
     background: var(--main-background);
+    margin-top: 30px;
 }
 
 .extension-container {
