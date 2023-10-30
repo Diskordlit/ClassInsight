@@ -3,27 +3,44 @@ window.onload = function () {
     const needTranscribeURL = document.querySelector(".need-transcribe");
 
     if (videoTranscriptLinkElement === null || videoTranscriptLinkElement.src === null) {
-        needTranscribeURL.style.display = "none"; //Change Back to block later
+        needTranscribeURL.style.display = "block"; //Change Back to block later
     } else {
         videoTranscriptLinkElement = videoTranscriptLinkElement.src;
         videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, originalLink.indexOf("streamContent") + "streamContent".length) + "&format=json&applymediaedits=false";
         needTranscribeURL.style.display = "none";
+
+        //Add in function to get the json to be passed in as context
+        var tempContextHolder = "";
+        startConversation(tempContextHolder);
     }
 }
 
 function transcribeVideo() {
+    //Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
+
     alert("Add Transcribe Video Function!");
 
+    var tempContextHolder = "";
     const status = "failed";
 
     if (status === "success") {
-        startConversation();
+        startConversation(tempContextHolder);
     } else if (status === "failed") {
         alert("Something went wrong!")
     }
 }
 
-function startConversation() {
+function startConversation(context) {
+    const noTranscribe = document.querySelector(".chatbox-container");
+    const status = "failed";
+
+    if (status === "success") {
+        noTranscribe.style.display = "block";
+        addSystemPrompt("Hello there! What would you like to know about the video?");
+    } else {
+        alert("Something Went Wrong!");
+    }
+
     alert("Add Start Conversation Function!");
 }
 
