@@ -1,6 +1,9 @@
 async function fetchData() {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
+    // skip urls like "chrome://" to avoid extension error
+    if (tab.url?.startsWith("chrome://")) return undefined;
+
     chrome.scripting.executeScript({
         target: { tabId: tab.id },
         function: getVideoTranscriptLink,
@@ -18,9 +21,13 @@ function getVideoTranscriptLink() {
 function handleVideoTranscript(videoTranscriptLinkElement) {
     const needTranscribeURL = document.querySelector(".need-transcribe");
 
-    if (videoTranscriptLinkElement === null || videoTranscriptLinkElement.src === null) {
+    if (!videoTranscriptLinkElement) {
         needTranscribeURL.style.display = "block"; // Change back to "block" later
     } else {
+        if (!videoTranscriptLinkElement.src) {
+            needTranscribeURL.style.display = "block"; // Change back to "block" later
+            return;
+        }
         videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, videoTranscriptLinkElement.indexOf("streamContent") + "streamContent".length) + "?format=json&applymediaedits=false";
         handleTranscriptJSON(videoTranscriptLinkElement);
         needTranscribeURL.style.display = "none";
@@ -65,8 +72,17 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.storage.sync.get("videoTranscriptLink", ({ videoTranscriptLink }) => {
         handleVideoTranscript(videoTranscriptLink);
     });
+
+    transcribeBtn.addEventListener('click', () => {
+        transcribeVideo()
+    });
+
+    sendBtn.addEventListener('click', () => {
+        addUserPrompt();
+    })
 });
 
+// Transcribe video starts (detected when btn-transcribe is clicked)
 function transcribeVideo() {
     //Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
 
@@ -82,20 +98,7 @@ function transcribeVideo() {
     }
 }
 
-function startConversation(context) {
-    const noTranscribe = document.querySelector(".chatbox-container");
-    const status = "success";
-
-    if (status === "success") {
-        noTranscribe.style.display = "block";
-        addSystemPrompt("Hello there! What would you like to know about the video?");
-    } else {
-        alert("Something Went Wrong!");
-    }
-
-    alert("Add Start Conversation Function!");
-}
-
+// Send user message to chatbox (after entered)
 function addUserPrompt() {
     const userInput = document.getElementById("userInput").value;
     if (userInput.trim() !== "") {
@@ -112,6 +115,20 @@ function addUserPrompt() {
         // Scroll to the bottom to keep the latest message visible
         conversationContainer.scrollTop = conversationContainer.scrollHeight;
     }
+}
+
+function startConversation(context) {
+    const noTranscribe = document.querySelector(".chatbox-container");
+    const status = "success";
+
+    if (status === "success") {
+        noTranscribe.style.display = "block";
+        addSystemPrompt("Hello there! What would you like to know about the video?");
+    } else {
+        alert("Something Went Wrong!");
+    }
+
+    alert("Add Start Conversation Function!");
 }
 
 function addSystemPrompt(message) {

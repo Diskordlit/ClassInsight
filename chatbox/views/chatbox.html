@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>chatbox</title>
-    <link rel="stylesheet" href="chatbox.css">
-    <script type="text/javascript" src="chatbox.js"></script>
+    <title>Chatbox</title>
+
+    <!-- Stylesheet Links -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
         integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -14,6 +14,10 @@
         integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="../styles/chatbox.css">
+
+    <!-- JS Links -->
+    <script defer="true" type="text/javascript" src="../scripts/chatbox.js"></script>
 </head>
 
 <body>
@@ -23,7 +27,7 @@
             <div class="upper-content-container">
                 <div class="title-logo-container">
                     <div class="logo">
-                        <img src="logo.png" height="50px" width="50px">
+                        <img src="../logo.png" height="50px" width="50px">
                     </div>
                     <div class="title">
                         <h1>ClassInsight</h1>
@@ -40,7 +44,7 @@
             <div class="main-content-container">
                 <div class="need-transcribe url-container">
                     <input type="text" class="url-input">
-                    <button class="btn-transcribe" title="Transcribe" onclick="transcribeVideo()">
+                    <button id="transcribeBtn" class="btn-transcribe" title="Transcribe">
                         <i class="fa fa-language"></i>
                     </button>
                 </div>
@@ -82,7 +86,7 @@
                     </div>
                     <div class="prompt-container">
                         <textarea type="text" class="prompt-input" id="userInput"></textarea>
-                        <button class="btn-send" onclick="addUserPrompt()">
+                        <button id="sendBtn" class="btn-send">
                             <i class="fa fa-paper-plane"></i>
                         </button>
                     </div>
