@@ -13,7 +13,7 @@
 }
 
 body {
-    height: 100vh;
+    height: 100%;
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -29,7 +29,6 @@ body {
     padding: 20px 16px;
     max-height: 606px;
     background: var(--main-background);
-    margin-top: 30px;
 }
 
 .extension-container {

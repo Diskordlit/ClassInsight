@@ -12,14 +12,17 @@ var videoTranscriptLink = "";
 function getVideoTranscriptLink() {
     videoTranscriptLink = document.querySelector("video > track").src;
     console.log(videoTranscriptLink);
-    chrome.storage.sync.set({ videoTranscriptLink });
+    chrome.storage.session.set({ "videoTranscriptLink": videoTranscriptLink });
 }
 
 function handleVideoTranscript(videoTranscriptLinkElement) {
     const needTranscribeURL = document.querySelector(".need-transcribe");
+    const noTranscribe = document.querySelector(".no-transcribe");
+    console.log(videoTranscriptLinkElement);
 
-    if (videoTranscriptLinkElement === null || videoTranscriptLinkElement.src === null) {
+    if (videoTranscriptLinkElement === null || videoTranscriptLinkElement === undefined) {
         needTranscribeURL.style.display = "block"; // Change back to "block" later
+        noTranscribe.style.display = "none";
     } else {
         videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, videoTranscriptLinkElement.indexOf("streamContent") + "streamContent".length) + "?format=json&applymediaedits=false";
         handleTranscriptJSON(videoTranscriptLinkElement);
@@ -31,10 +34,10 @@ function handleVideoTranscript(videoTranscriptLinkElement) {
     }
 }
 
-function handleTranscriptJSON(videoTranscriptLinkElement) {
+async function handleTranscriptJSON(videoTranscriptLinkElement) {
 
     // Fetch the JSON data from the API
-    fetch(videoTranscriptLinkElement)
+    await fetch(videoTranscriptLinkElement)
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`Network response was not ok: ${response.status}`);
@@ -58,14 +61,6 @@ function handleTranscriptJSON(videoTranscriptLinkElement) {
             console.error(`Fetch error: ${error}`);
         });
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    fetchData();
-
-    chrome.storage.sync.get("videoTranscriptLink", ({ videoTranscriptLink }) => {
-        handleVideoTranscript(videoTranscriptLink);
-    });
-});
 
 function transcribeVideo() {
     //Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
@@ -132,3 +127,26 @@ function getCurrentTime() {
     const minutes = now.getMinutes().toString().padStart(2, '0');
     return hours + ':' + minutes;
 }
+
+function reset() {
+    chrome.storage.session.remove("videoTranscriptLink");
+
+    startUp();
+}
+
+function startUp() {
+    chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
+
+    fetchData();
+
+    chrome.storage.session.get(["videoTranscriptLink"], ({videoTranscriptLink}) => {
+        handleVideoTranscript(videoTranscriptLink);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    startUp();
+
+    const resetButton = document.getElementById('resetButton');
+    resetButton.addEventListener('click', reset);
+});
