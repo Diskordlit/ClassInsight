@@ -1,129 +1,17 @@
-async function fetchData() {
-    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+import { addUserPrompt, addSystemPrompt } from "./input.js";
+import { fetchVideoTranscriptLink, isVideoTranscriptLink } from "./data.js";
+import { handleVideoTranscript, transcribeVideo } from "./processor.js";
 
-    // skip urls like "chrome://" to avoid extension error
-    if (tab.url?.startsWith("chrome://")) return undefined;
+// to enable it in all content scripts 
+chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
 
-    chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        function: getVideoTranscriptLink,
-    });
-}
-
-var videoTranscriptLink = "";
-
-function getVideoTranscriptLink() {
-    videoTranscriptLink = document.querySelector("video > track").src;
-    console.log(videoTranscriptLink);
-    chrome.storage.session.set({ "videoTranscriptLink": videoTranscriptLink });
-}
-
-function handleVideoTranscript(videoTranscriptLinkElement) {
-    const needTranscribeURL = document.querySelector(".need-transcribe");
-    const noTranscribe = document.querySelector(".no-transcribe");
-    console.log(videoTranscriptLinkElement);
-
-    if (!videoTranscriptLinkElement) {
-        needTranscribeURL.style.display = "block"; // Change back to "block" later
-        noTranscribe.style.display = "none";
-    } else {
-        needTranscribeURL.style.display = "block"; // Change back to "block" later
-        videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, videoTranscriptLinkElement.indexOf("streamContent") + "streamContent".length) + "?format=json&applymediaedits=false";
-        handleTranscriptJSON(videoTranscriptLinkElement);
-        needTranscribeURL.style.display = "none";
-
-        // Add a function to get the JSON to be passed in as context
-        var tempContextHolder = "";
-        startConversation(tempContextHolder);
-    }
-}
-
-async function handleTranscriptJSON(videoTranscriptLinkElement) {
-
-    // Fetch the JSON data from the API
-    await fetch(videoTranscriptLinkElement)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status}`);
-            }
-            return response.json(); // Parse the response as JSON
-        })
-        .then((jsonData) => {
-            // Once you have the JSON data, you can process it as shown in the previous example
-            const filteredEntries = [];
-
-            for (const entry of jsonData.entries) {
-                const { text, startOffset, endOffset } = entry;
-                const filteredEntry = { text, startOffset, endOffset };
-                filteredEntries.push(filteredEntry);
-            }
-
-            // Now, you can work with the filteredEntries array
-            console.log(filteredEntries);
-        })
-        .catch((error) => {
-            console.error(`Fetch error: ${error}`);
-        });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    startUp();
-
-    transcribeBtn.addEventListener('click', () => {
-        transcribeVideo()
-    });
-
-    sendBtn.addEventListener('click', () => {
-        addUserPrompt();
-    });
-
-    resetBtn.addEventListener('click', () => {
-        reset();
-    })
-});
-
-// Transcribe video starts (detected when btn-transcribe is clicked)
-function transcribeVideo() {
-    //Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
-
-    alert("Add Transcribe Video Function!");
-
-    var tempContextHolder = "";
-    const status = "failed";
-
-    if (status === "success") {
-        startConversation(tempContextHolder);
-    } else if (status === "failed") {
-        alert("Something went wrong!")
-    }
-}
-
-// Send user message to chatbox (after entered)
-function addUserPrompt() {
-    const userInput = document.getElementById("userInput").value;
-    if (userInput.trim() !== "") {
-        const conversationContainer = document.querySelector(".conversation-container");
-        const userResponse = document.createElement("div");
-        userResponse.className = "user-response";
-        userResponse.innerHTML = userInput +
-            '<span class="user-timestamp">' + getCurrentTime() + '</span>';
-        conversationContainer.appendChild(userResponse);
-
-        // Optionally, you can clear the input field after sending the response
-        document.getElementById("userInput").value = "";
-
-        // Scroll to the bottom to keep the latest message visible
-        conversationContainer.scrollTop = conversationContainer.scrollHeight;
-    }
-}
-
-function startConversation(context) {
+function startConversation() {
     const noTranscribe = document.querySelector(".chatbox-container");
     const status = "success";
 
     if (status === "success") {
         noTranscribe.style.display = "block";
-        addSystemPrompt("Hello there! What would you like to know about the video?");
+        addSystemPrompt("Hello there! What would you like to know about the video?", ".conversation-container");
     } else {
         alert("Something Went Wrong!");
     }
@@ -131,56 +19,59 @@ function startConversation(context) {
     alert("Add Start Conversation Function!");
 }
 
-function addSystemPrompt(message) {
-    const conversationContainer = document.querySelector(".conversation-container");
-    const systemResponse = document.createElement("div");
-    systemResponse.className = "system-response";
-    systemResponse.innerHTML = message +
-        '<span class="system-timestamp">' + getCurrentTime() + '</span>';
-    conversationContainer.appendChild(systemResponse);
+async function startUp() {
+    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-    // Scroll to the bottom to keep the latest message visible
-    conversationContainer.scrollTop = conversationContainer.scrollHeight;
-}
+    // skip urls like "chrome://" to avoid extension error
+    if (tab.url?.startsWith("chrome://")) return undefined;
 
-function getCurrentTime() {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    return hours + ':' + minutes;
-}
-
-function reset() {
-    startUp();
-}
-
-function startUp() {
-    chrome.storage.session.get("videoTranscriptLink", ({ videoTranscriptLink }) => {
-        if (videoTranscriptLink) {
-            // If 'videoTranscriptLink' exists in storage, handle it
-            handleVideoTranscript(videoTranscriptLink);
-
-            // Clear the 'videoTranscriptLink' in storage
-            chrome.storage.session.remove('videoTranscriptLink', function () {
-                if (chrome.runtime.lastError) {
-                    console.error(chrome.runtime.lastError);
+    let isValid;
+    chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: isVideoTranscriptLink,
+    }).then((res) => isValid = res[0].result)
+        .then((_) => {
+            chrome.storage.session.get(["videoTranscriptLink", "videoUrl"]).then(({ videoTranscriptLink, videoUrl }) => {
+                if (isValid) {
+                    if (videoTranscriptLink && videoUrl == tab.url) {
+                        // If 'videoTranscriptLink' exists in storage, handle it
+                        handleVideoTranscript(videoTranscriptLink, startConversation);
+                    } else {
+                        // If 'videoTranscriptLink' does not exist, perform other tasks
+                        fetchVideoTranscriptLink();
+                        handleVideoTranscript(videoTranscriptLink, startConversation);
+                    }
                 } else {
-                    console.log('videoTranscriptLink removed from storage');
+                    // Clear the 'videoTranscriptLink' in storage
+                    chrome.storage.session.remove(["videoTranscriptLink", "videoUrl"], function () {
+                        if (chrome.runtime.lastError) {
+                            console.error(chrome.runtime.lastError);
+                        } else {
+                            console.log('videoTranscriptLink & videoUrl removed from storage');
+                        }
+                    });
                 }
+            }).catch((err) => {
+                console.log(err);
             });
-        } else {
-            // If 'videoTranscriptLink' does not exist, perform other tasks
-            fetchData();
+        })
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    startUp();
+
+    transcribeBtn.addEventListener('click', () => {
+        const result = transcribeVideo();
+        if (result) {
+            startConversation("");
         }
     });
 
-    //chrome.storage.session.remove('videoTranscriptLink');
+    sendBtn.addEventListener('click', () => {
+        addUserPrompt("#userInput", ".conversation-container");
+    });
 
-    // chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
-
-    // fetchData();
-
-    // chrome.storage.session.get(["videoTranscriptLink"], ({ videoTranscriptLink }) => {
-    //     handleVideoTranscript(videoTranscriptLink);
-    // });
-}
+    resetBtn.addEventListener('click', () => {
+        startUp();
+    })
+});
