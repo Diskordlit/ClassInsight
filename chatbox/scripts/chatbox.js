@@ -1,6 +1,9 @@
 async function fetchData() {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
+    // skip urls like "chrome://" to avoid extension error
+    if (tab.url?.startsWith("chrome://")) return undefined;
+
     chrome.scripting.executeScript({
         target: { tabId: tab.id },
         function: getVideoTranscriptLink,
@@ -20,10 +23,11 @@ function handleVideoTranscript(videoTranscriptLinkElement) {
     const noTranscribe = document.querySelector(".no-transcribe");
     console.log(videoTranscriptLinkElement);
 
-    if (videoTranscriptLinkElement === null || videoTranscriptLinkElement === undefined) {
+    if (!videoTranscriptLinkElement) {
         needTranscribeURL.style.display = "block"; // Change back to "block" later
         noTranscribe.style.display = "none";
     } else {
+        needTranscribeURL.style.display = "block"; // Change back to "block" later
         videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, videoTranscriptLinkElement.indexOf("streamContent") + "streamContent".length) + "?format=json&applymediaedits=false";
         handleTranscriptJSON(videoTranscriptLinkElement);
         needTranscribeURL.style.display = "none";
@@ -62,6 +66,23 @@ async function handleTranscriptJSON(videoTranscriptLinkElement) {
         });
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    startUp();
+
+    transcribeBtn.addEventListener('click', () => {
+        transcribeVideo()
+    });
+
+    sendBtn.addEventListener('click', () => {
+        addUserPrompt();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        reset();
+    })
+});
+
+// Transcribe video starts (detected when btn-transcribe is clicked)
 function transcribeVideo() {
     //Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
 
@@ -77,20 +98,7 @@ function transcribeVideo() {
     }
 }
 
-function startConversation(context) {
-    const noTranscribe = document.querySelector(".chatbox-container");
-    const status = "success";
-
-    if (status === "success") {
-        noTranscribe.style.display = "block";
-        addSystemPrompt("Hello there! What would you like to know about the video?");
-    } else {
-        alert("Something Went Wrong!");
-    }
-
-    alert("Add Start Conversation Function!");
-}
-
+// Send user message to chatbox (after entered)
 function addUserPrompt() {
     const userInput = document.getElementById("userInput").value;
     if (userInput.trim() !== "") {
@@ -107,6 +115,20 @@ function addUserPrompt() {
         // Scroll to the bottom to keep the latest message visible
         conversationContainer.scrollTop = conversationContainer.scrollHeight;
     }
+}
+
+function startConversation(context) {
+    const noTranscribe = document.querySelector(".chatbox-container");
+    const status = "success";
+
+    if (status === "success") {
+        noTranscribe.style.display = "block";
+        addSystemPrompt("Hello there! What would you like to know about the video?");
+    } else {
+        alert("Something Went Wrong!");
+    }
+
+    alert("Add Start Conversation Function!");
 }
 
 function addSystemPrompt(message) {
@@ -129,9 +151,9 @@ function getCurrentTime() {
 }
 
 function reset() {
-    chrome.storage.session.remove("videoTranscriptLink");
+    // chrome.storage.session.remove("videoTranscriptLink");
 
-    startUp();
+    // startUp();
 }
 
 function startUp() {
@@ -139,14 +161,7 @@ function startUp() {
 
     fetchData();
 
-    chrome.storage.session.get(["videoTranscriptLink"], ({videoTranscriptLink}) => {
+    chrome.storage.session.get(["videoTranscriptLink"], ({ videoTranscriptLink }) => {
         handleVideoTranscript(videoTranscriptLink);
     });
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    startUp();
-
-    const resetButton = document.getElementById('resetButton');
-    resetButton.addEventListener('click', reset);
-});
