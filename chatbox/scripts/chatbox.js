@@ -151,17 +151,36 @@ function getCurrentTime() {
 }
 
 function reset() {
-    // chrome.storage.session.remove("videoTranscriptLink");
-
-    // startUp();
+    startUp();
 }
 
 function startUp() {
-    chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
+    chrome.storage.session.get("videoTranscriptLink", ({ videoTranscriptLink }) => {
+        if (videoTranscriptLink) {
+            // If 'videoTranscriptLink' exists in storage, handle it
+            handleVideoTranscript(videoTranscriptLink);
 
-    fetchData();
-
-    chrome.storage.session.get(["videoTranscriptLink"], ({ videoTranscriptLink }) => {
-        handleVideoTranscript(videoTranscriptLink);
+            // Clear the 'videoTranscriptLink' in storage
+            chrome.storage.session.remove('videoTranscriptLink', function () {
+                if (chrome.runtime.lastError) {
+                    console.error(chrome.runtime.lastError);
+                } else {
+                    console.log('videoTranscriptLink removed from storage');
+                }
+            });
+        } else {
+            // If 'videoTranscriptLink' does not exist, perform other tasks
+            fetchData();
+        }
     });
+
+    //chrome.storage.session.remove('videoTranscriptLink');
+
+    // chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
+
+    // fetchData();
+
+    // chrome.storage.session.get(["videoTranscriptLink"], ({ videoTranscriptLink }) => {
+    //     handleVideoTranscript(videoTranscriptLink);
+    // });
 }
