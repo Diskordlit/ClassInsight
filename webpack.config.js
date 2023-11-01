@@ -4,11 +4,12 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
-        chatbox: './chatbox/scripts/popup.js',
+        popup: './chatbox/scripts/popup.js',
         data: './chatbox/scripts/data.js',
         input: './chatbox/scripts/input.js',
         processor: './chatbox/scripts/processor.js',
-        utils: './chatbox/scripts/utils.js'
+        utils: './chatbox/scripts/utils.js',
+        gpt: './chatbox/scripts/gpt.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -39,4 +40,10 @@ module.exports = {
             ]
         })
     ],
+    resolve: {
+        fallback: {
+            "stream": require.resolve("stream-browserify"),
+            "buffer": require.resolve("buffer/")
+        }
+    }
 };
