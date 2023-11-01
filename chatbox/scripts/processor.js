@@ -18,8 +18,8 @@ export const transcribeVideo = () => {
 export const handleVideoTranscript = (videoTranscriptLinkElement, callbackFn) => {
     const needTranscribeURL = document.querySelector(".need-transcribe");
     const noTranscribe = document.querySelector(".no-transcribe");
-    console.log(videoTranscriptLinkElement);
 
+    console.log(videoTranscriptLinkElement);
     if (!videoTranscriptLinkElement) {
         needTranscribeURL.style.display = "block"; // Change back to "block" later
         noTranscribe.style.display = "none";

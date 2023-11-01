@@ -39,7 +39,7 @@ async function startUp() {
                     } else {
                         // If 'videoTranscriptLink' does not exist, perform other tasks
                         fetchVideoTranscriptLink();
-                        handleVideoTranscript(videoTranscriptLink, startConversation);
+                        startUp();
                     }
                 } else {
                     // Clear the 'videoTranscriptLink' in storage
