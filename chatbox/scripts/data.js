@@ -5,7 +5,7 @@ export const fetchVideoTranscriptLink = async () => {
     // skip urls like "chrome://" to avoid extension error
     if (tab.url?.startsWith("chrome://")) return undefined;
 
-    chrome.scripting.executeScript({
+    await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         function: getVideoTranscriptLink,
     });
