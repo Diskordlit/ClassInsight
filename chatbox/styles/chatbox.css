@@ -27,7 +27,7 @@ body {
     align-items: center;
     width: 320px;
     padding: 20px 16px;
-    max-height: 606px;
+    /**max-height: 606px;**/
     background: var(--main-background);
 }
 
@@ -140,6 +140,7 @@ input[type="text"]:focus {
     background: var(--chatbox-border-color);
     border-radius: 7px;
     display: none;
+    margin-top: 10px;
 }
 
 .conversation-container {
