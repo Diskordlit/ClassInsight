@@ -1,3 +1,4 @@
 node_modules
 .env
 dist
+chatbox/scripts/config.js
