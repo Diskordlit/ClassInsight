@@ -12,7 +12,7 @@ function startConversation() {
 
     if (status === "success") {
         noTranscribe.style.display = "block";
-        addSystemPrompt("Hello there! What would you like to know about the video?", ".conversation-container");
+        addSystemPrompt("Hello there! What would you like to know about the video?");
     } else {
         alert("Something Went Wrong!");
     }
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     sendBtn.addEventListener('click', () => {
-        addUserPrompt("#userInput", ".conversation-container");
+        addUserPrompt("#userInput");
     });
 
     resetBtn.addEventListener('click', () => {

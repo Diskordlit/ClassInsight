@@ -19,30 +19,27 @@ var messages = [
 
 function sendTranscript(transcript) {
   messages.push(
-    { role: "system", content: `The transcript for this video is as follows: ${transcript}`}
+    { role: "system", content: `The transcript for this video is as follows: ${JSON.stringify(transcript)}`}
   )
 }
 
 async function askGPT(prompt) {
-  const client = new OpenAIClient(endpoint, new AzureKeyCredential(azureApiKey));
-  const deploymentId = "ClassInsight-GPT";
+  try {
+    const client = new OpenAIClient(endpoint, new AzureKeyCredential(azureApiKey));
+    const deploymentId = "ClassInsight-GPT";
 
-  messages.push(
-    { role: "user", content: prompt }
-  )
+    messages.push({ role: "user", content: prompt });
 
-  const result = await client.getChatCompletions(deploymentId, messages);
+    const result = await client.getChatCompletions(deploymentId, messages);
 
-  for (const choice of result.choices) {
-    messages.push(
-      { role: "assistant", content: choice }
-    )
-    return choice.message.content;
+    for (const choice of result.choices) {
+      messages.push({ role: "assistant", content: choice });
+      return choice.message.content;
+    }
+  } catch (err) {
+    console.error("The sample encountered an error:", err);
+    return "The sample encountered an error: " + err;
   }
 }
-
-askGPT().catch((err) => {
-  return "The sample encountered an error:", err;
-});
 
 module.exports = { askGPT, sendTranscript };
