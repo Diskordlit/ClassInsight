@@ -10,12 +10,16 @@ const azureApiKey = config.AZURE_OPENAI_KEY;
 // 4. The messages array contains the conversation between the user and assistan. Use it to update the display
 
 var messages = [
-  { role: "system", content: "You are an assistant that helps users understand key points from a video. You will be provided video transcripts. Users will then ask you questions about the video. Answer their questions based on details in the transcript" },
+  {
+    role: "system",
+    content: `You are an assistant that helps users understand key points from a video. You will be provided video transcripts along with the timestamp. 
+            Users will then ask you questions about the video. Answer their questions based on details in the transcript provided to you.`
+  },
 ];
 
 function sendTranscript(transcript) {
   messages.push(
-    { role: "system", content: "The transcript for this video is as follows: " + transcript }
+    { role: "system", content: `The transcript for this video is as follows: ${transcript}`}
   )
 }
 
@@ -41,4 +45,4 @@ askGPT().catch((err) => {
   return "The sample encountered an error:", err;
 });
 
-module.exports = { askGPT };
+module.exports = { askGPT, sendTranscript };

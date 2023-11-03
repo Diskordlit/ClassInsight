@@ -1,3 +1,6 @@
+import { formatTimestamp } from "./utils";
+import { sendTranscript } from "./gpt";
+
 // Transcribe video starts (detected when btn-transcribe is clicked)
 export const transcribeVideo = () => {
     //Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
@@ -50,13 +53,15 @@ export const handleTranscriptJSON = async (videoTranscriptLinkElement) => {
             const filteredEntries = [];
 
             for (const entry of jsonData.entries) {
-                const { text, startOffset, endOffset } = entry;
-                const filteredEntry = { text, startOffset, endOffset };
+                const { text, startOffset } = entry;
+                const formattedTimestamp = formatTimestamp(startOffset);
+                const filteredEntry = { text, timestamp: formattedTimestamp };
                 filteredEntries.push(filteredEntry);
             }
 
             // Now, you can work with the filteredEntries array
             console.log(filteredEntries);
+            sendTranscript(filteredEntries);
         })
         .catch((error) => {
             console.error(`Fetch error: ${error}`);

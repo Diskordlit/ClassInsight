@@ -1,6 +1,7 @@
 import { addUserPrompt, addSystemPrompt } from "./input.js";
 import { fetchVideoTranscriptLink, isVideoTranscriptLink } from "./data.js";
 import { handleVideoTranscript, transcribeVideo } from "./processor.js";
+import { askGPT } from "./gpt.js";
 
 // to enable it in all content scripts 
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
@@ -72,6 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     resetBtn.addEventListener('click', () => {
-        startUp();
+        //startUp();
     })
 });

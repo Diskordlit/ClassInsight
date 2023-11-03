@@ -1,13 +1,16 @@
 import { getCurrentTime } from "./utils.js";
+import { askGPT } from "./gpt.js";
 
 // Send user message to chatbox (after entered)
-export const addUserPrompt = (inputField, conversationField) => {
-    const userInput = document.querySelector(inputField).value;
-    if (userInput.trim() !== "") {
+export const addUserPrompt = async (inputField, conversationField) => {
+    let userInput = document.querySelector(inputField);
+
+    if (userInput.value.trim() !== "") {
+        console.log(await askGPT(userInput.value));
         const conversationContainer = document.querySelector(conversationField);
         const userResponse = document.createElement("div");
         userResponse.className = "user-response";
-        userResponse.innerHTML = userInput +
+        userResponse.innerHTML = userInput.value +
             '<span class="user-timestamp">' + getCurrentTime() + '</span>';
         conversationContainer.appendChild(userResponse);
 

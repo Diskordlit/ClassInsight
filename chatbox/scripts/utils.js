@@ -5,3 +5,10 @@ export const getCurrentTime = () => {
     const minutes = now.getMinutes().toString().padStart(2, '0');
     return hours + ':' + minutes;
 }
+
+
+//Format Timestamp
+export const formatTimestamp = (timestampWithMilliseconds) => {
+    const parts = timestampWithMilliseconds.split(".");
+    return parts[0]; // Take only the part before the dot (milliseconds)
+}
