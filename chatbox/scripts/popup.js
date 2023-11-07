@@ -1,7 +1,6 @@
 import { addUserPrompt, addSystemPrompt } from "./input.js";
-import { fetchVideoTranscriptLink, isVideoTranscriptLink } from "./data.js";
+import { fetchVideoTranscriptLink, isVideoTranscriptLink, fetchStreamVideoLink } from "./data.js";
 import { handleVideoTranscript, transcribeVideo } from "./processor.js";
-import { askGPT } from "./gpt.js";
 
 // to enable it in all content scripts 
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
@@ -51,6 +50,8 @@ async function startUp() {
                             console.log('videoTranscriptLink & videoUrl removed from storage');
                         }
                     });
+
+                    fetchStreamVideoLink();
                 }
             }).catch((err) => {
                 console.log(err);
@@ -62,10 +63,11 @@ document.addEventListener('DOMContentLoaded', function () {
     startUp();
 
     transcribeBtn.addEventListener('click', () => {
-        const result = transcribeVideo();
-        if (result) {
-            startConversation("");
-        }
+        transcribeVideo();
+        // const result = transcribeVideo();
+        // if (result) {
+        //     startConversation("");
+        // }
     });
 
     sendBtn.addEventListener('click', () => {

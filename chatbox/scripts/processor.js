@@ -1,20 +1,42 @@
-import { formatTimestamp } from "./utils";
+import { formatTimestamp, convertToAudio } from "./utils";
 import { sendTranscript } from "./gpt";
 
 // Transcribe video starts (detected when btn-transcribe is clicked)
 export const transcribeVideo = () => {
     //Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
 
-    alert("Add Transcribe Video Function!");
+    var url = "";
 
-    const status = "failed";
+    chrome.storage.session.get("videoLink").then(({ videoLink }) => {
+        url = videoLink;
+        console.log(videoLink);
 
-    if (status === "success") {
-        return true;
-    } else if (status === "failed") {
-        alert("Something went wrong!");
-        return false;
-    }
+        fetch(videoLink)
+            .then((response) => response.blob()) // Fetch the video content
+            .then((videoBlob) => {
+                // Perform video to audio conversion using a library or service
+                // For this example, assume 'convertToAudio' is a function that takes the video blob and returns audio in WAV format.
+                console.log(videoBlob);
+                return convertToAudio(videoBlob);
+            })
+            // .then((audioData) => {
+            //     // Upload the converted audio to Azure Cosmos DB
+            //     // Make sure you have the Cosmos DB credentials and collection details
+            //     // Use the Azure Cosmos DB JavaScript SDK as shown in the previous response.
+            // })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    });
+
+    // const status = "failed";
+
+    // if (status === "success") {
+    //     return true;
+    // } else if (status === "failed") {
+    //     alert("Something went wrong!");
+    //     return false;
+    // }
 }
 
 // Handle video transcript
