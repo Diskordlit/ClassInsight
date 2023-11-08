@@ -26,13 +26,13 @@ export const fetchStreamVideoLink = async () => {
 // Set video transcript link onto chrome session
 export const getVideoTranscriptLink = () => {
     let videoTranscriptLink = document.querySelector("video > track").src;
-    chrome.storage.session.set({ videoTranscriptLink, videoUrl: window.location.href});
+    chrome.storage.session.set({ videoTranscriptLink, videoUrl: window.location.href });
 }
 
 // Set video transcript link onto chrome session
 export const getStreamVideoLink = () => {
     let videoLink = document.querySelector("video").src;
-    chrome.storage.session.set({ videoLink: videoLink});
+    chrome.storage.session.set({ videoLink: videoLink });
 }
 
 // Check whether video exists

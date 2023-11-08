@@ -13,11 +13,11 @@ export const transcribeVideo = () => {
 
         fetch(videoLink)
             .then((response) => response.blob()) // Fetch the video content
-            .then((videoBlob) => {
+            .then(async (videoBlob) => {
                 // Perform video to audio conversion using a library or service
                 // For this example, assume 'convertToAudio' is a function that takes the video blob and returns audio in WAV format.
-                console.log(videoBlob);
-                return convertToAudio(videoBlob);
+                const audioFile = await convertToAudio(videoBlob);
+                console.log(audioFile);
             })
             // .then((audioData) => {
             //     // Upload the converted audio to Azure Cosmos DB
@@ -61,9 +61,9 @@ export const handleVideoTranscript = (videoTranscriptLinkElement, callbackFn) =>
 }
 
 // Handle JSON transcript
-export const handleTranscriptJSON = async (videoTranscriptLinkElement) => {
+export const handleTranscriptJSON = (videoTranscriptLinkElement) => {
     // Fetch the JSON data from the API
-    await fetch(videoTranscriptLinkElement)
+    fetch(videoTranscriptLinkElement)
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`Network response was not ok: ${response.status}`);

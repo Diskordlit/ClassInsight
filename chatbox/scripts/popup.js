@@ -42,6 +42,7 @@ async function startUp() {
                         startUp();
                     }
                 } else {
+                    fetchStreamVideoLink();
                     // Clear the 'videoTranscriptLink' in storage
                     chrome.storage.session.remove(["videoTranscriptLink", "videoUrl"], function () {
                         if (chrome.runtime.lastError) {
@@ -50,8 +51,6 @@ async function startUp() {
                             console.log('videoTranscriptLink & videoUrl removed from storage');
                         }
                     });
-
-                    fetchStreamVideoLink();
                 }
             }).catch((err) => {
                 console.log(err);

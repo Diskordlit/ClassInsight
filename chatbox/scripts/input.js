@@ -1,5 +1,5 @@
-import { getCurrentTime } from "./utils.js";
-import { askGPT } from "./gpt.js";
+import { getCurrentTime } from "./utils";
+import { askGPT } from "./gpt";
 
 const conversationContainer = document.querySelector(".conversation-container");
 

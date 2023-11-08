@@ -1,51 +1,36 @@
+import { convert } from 'video-to-audio';
+
 // Get current time
-export const getCurrentTime = () => {
+export function getCurrentTime() {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
     return hours + ':' + minutes;
 }
 
-//Format Timestamp
-export const formatTimestamp = (timestampWithMilliseconds) => {
+// Format Timestamp
+export function formatTimestamp(timestampWithMilliseconds) {
     const parts = timestampWithMilliseconds.split(".");
     return parts[0]; // Take only the part before the dot (milliseconds)
 }
 
 // Convert Video to Audio
-export const convertToAudio = (videoBlob) => {
-    return new Promise((resolve, reject) => {
-        const ffmpeg = require('ffmpeg.js/ffmpeg-mp4.js');
-        const ffmpegWorker = new Worker(ffmpeg);
+export async function convertToAudio(videoBlob) {
+    const videoFile = new File([videoBlob], "input.mp4", { type: "video/mp4" });
+    console.log(videoFile);
+    let targetAudioFormat = "wav";
+    console.log("================================================Converting MP4 to WAV====================================================");
 
-        ffmpegWorker.postMessage({
-            type: 'run',
-            MEMFS: [{ name: 'input.mp4', data: videoBlob }],
-            arguments: ['-i', 'input.mp4', 'output.wav']
-        });
+    let { data } = await convert(videoFile, targetAudioFormat);
+    let response = await fetch(data);
+    let blobData = await response.blob();
+    let blobObject = new Blob([blobData], { type: blobData.type });
+    const audioFile = new File([blobObject], "output.wav", { type: "audio/wav" });
+    return audioFile;
 
-        ffmpegWorker.onmessage = function (e) {
-            const message = e.data;
-            switch (message.type) {
-                case 'stdout':
-                    console.log('FFmpeg stdout: ' + message.data);
-                    break;
-                case 'stderr':
-                    console.error('FFmpeg stderr: ' + message.data);
-                    break;
-                case 'exit':
-                    console.log('FFmpeg process exited with code ' + message.data);
-                    break;
-                case 'done':
-                    const audioBlob = new Blob([message.data.MEMFS[0].data], { type: 'audio/wav' });
-                    resolve(audioBlob);
-                    ffmpegWorker.terminate();
-                    break;
-            }
-        };
-
-        ffmpegWorker.onerror = function (error) {
-            reject(error);
-        };
-    });
+    // Download audio element (if needed)
+    // let a = document.createElement("a");
+    // a.href = targetAudioFile.data;
+    // a.download = targetAudioFile.name + "." + targetAudioFile.format;
+    // a.click();
 }
