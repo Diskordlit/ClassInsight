@@ -1,4 +1,4 @@
-import { convert } from 'video-to-audio';
+import { convert } from './mp4_wav';
 
 // Get current time
 export function getCurrentTime() {

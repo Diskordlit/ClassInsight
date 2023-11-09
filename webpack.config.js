@@ -9,7 +9,8 @@ module.exports = {
         input: './chatbox/scripts/input.js',
         processor: './chatbox/scripts/processor.js',
         utils: './chatbox/scripts/utils.js',
-        gpt: './chatbox/scripts/gpt.js'
+        gpt: './chatbox/scripts/gpt.js',
+        mp4_wav: './chatbox/scripts/mp4_wav.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
