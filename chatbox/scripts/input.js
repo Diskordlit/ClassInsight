@@ -30,8 +30,35 @@ export const addUserPrompt = async (inputField) => {
 export const addSystemPrompt = (message) => {
     const systemResponse = document.createElement("div");
     systemResponse.className = "system-response";
-    systemResponse.innerHTML = message +
-        '<span class="system-timestamp">' + getCurrentTime() + '</span>';
+
+    // Check if the message contains points (e.g., '1.', '2.')
+    const hasPoints = /\d+\./.test(message);
+
+    if (hasPoints) {
+        // Split the text into points using the specified delimiter (e.g., '1.')
+        const points = message.split(/\d+\./).filter(Boolean);
+
+        // Create an unordered list element
+        const ul = document.createElement('ul');
+
+        // Add each point as a list item
+        points.forEach(point => {
+            const li = document.createElement('li');
+            li.textContent = point.trim();
+            ul.appendChild(li);
+        });
+
+        // Append the list to the system response
+        systemResponse.appendChild(ul);
+    } else {
+        // If there are no points, just add the message as a plain text
+        systemResponse.textContent = message;
+    }
+
+    // Add timestamp to the system response
+    systemResponse.innerHTML += '<span class="system-timestamp">' + getCurrentTime() + '</span>';
+
+    // Append the system response to the conversation container
     conversationContainer.appendChild(systemResponse);
 
     // Scroll to the bottom to keep the latest message visible

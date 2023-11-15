@@ -13,7 +13,13 @@ var messages = [
   {
     role: "system",
     content: `You are an assistant that helps users understand key points from a video. You will be provided video transcripts along with the timestamp. 
-            Users will then ask you questions about the video. Answer their questions based on details in the transcript provided to you.`
+              Users will then ask you questions about the video. Answer their questions based on details in the transcript provided to you.
+            
+              Some other rules to follow:
+              - If there are any point forms, please only use an ordered list format, i.e. "1., 2., 3., etc".
+              - Keep responses as short as possible at only about 50 tokens.
+              - Only answer questions related to the video only.
+            `
   },
 ];
 
