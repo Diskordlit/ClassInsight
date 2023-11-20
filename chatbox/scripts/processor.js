@@ -18,7 +18,7 @@ export const transcribeVideo = () => {
                 // Perform video to audio conversion using a library or service
                 // For this example, assume 'convertToAudio' is a function that takes the video blob and returns audio in WAV format.
                 const audioFile = await convertToAudio(videoBlob);
-                console.log(await fromFile(audioFile));
+                console.log(await fromFile(audioFile, videoLink));
             })
             // .then((audioData) => {
             //     // Upload the converted audio to Azure Cosmos DB
