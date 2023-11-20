@@ -29,10 +29,14 @@
   },
   "dependencies": {
     "@azure/openai": "^1.0.0-beta.7",
+    "browserify-fs": "^1.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "crypto-browserify": "^3.12.0",
     "ffmpeg.js": "^4.2.9003",
+    "https-browserify": "^1.0.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.33.1",
-    "path-browserify": "^1.0.1"
+    "path-browserify": "^1.0.1",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.3"
   }
 }

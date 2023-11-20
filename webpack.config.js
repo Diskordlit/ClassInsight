@@ -48,7 +48,10 @@ module.exports = {
             "buffer": require.resolve("buffer/"),
             "crypto": require.resolve("crypto-browserify"),
             "path": require.resolve("path-browserify"),
-            "fs": false // or an appropriate replacement
+            "fs": require.resolve("browserify-fs"), // or an appropriate replacement
+            "https": require.resolve('https-browserify'),
+            "http": require.resolve('stream-http'),
+            "url": require.resolve('url/')
         }
     }
 };
