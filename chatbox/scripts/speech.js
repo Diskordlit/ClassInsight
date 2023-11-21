@@ -50,9 +50,9 @@ export async function fromFile(AUDIO_FILE, AUDIO_LINK) {
   };
 
   try {
-    const response = await fetch(`https://${SPEECH_REGION}.cognitiveservices.azure.com/speechtotext/v3.0/transcriptions`, options);
+    const response = await fetch(`${SPEECH_ENDPOINT}`, options);
     console.log(`statusCode: ${response.status}`);
-    const result = await response.json();
+    const result = response;
     console.log(result);
   } catch (error) {
     console.error(error);
