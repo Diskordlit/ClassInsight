@@ -9,6 +9,9 @@
     "activeTab",
     "scripting"
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  },
   "action": {
     "default_popup": "chatbox/views/popup.html",
     "default_icon": {

@@ -1,6 +1,6 @@
 import { formatTimestamp, convertToAudio } from "./utils";
 import { sendTranscript } from "./gpt";
-import { fromFile } from "./speech";
+import { transcribeAudio } from "./speech";
 
 // Transcribe video starts (detected when btn-transcribe is clicked)
 export const transcribeVideo = () => {
@@ -18,7 +18,7 @@ export const transcribeVideo = () => {
                 // Perform video to audio conversion using a library or service
                 // For this example, assume 'convertToAudio' is a function that takes the video blob and returns audio in WAV format.
                 const audioFile = await convertToAudio(videoBlob);
-                console.log(await fromFile(audioFile, videoLink));
+                console.log(await transcribeAudio(audioFile));
             })
             // .then((audioData) => {
             //     // Upload the converted audio to Azure Cosmos DB

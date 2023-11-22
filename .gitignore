@@ -1,4 +1,6 @@
 node_modules
+external_api/node_modules
 .env
 dist
 chatbox/scripts/config.js
+external_api/config.js
