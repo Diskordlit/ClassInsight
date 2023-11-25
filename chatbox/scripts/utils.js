@@ -34,3 +34,21 @@ export async function convertToAudio(videoBlob) {
     // a.download = targetAudioFile.name + "." + targetAudioFile.format;
     // a.click();
 }
+
+// Function to get video duration from a Blob
+export const getVideoDuration = async (videoBlob) => {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+
+        video.onloadedmetadata = function () {
+            resolve(video.duration);
+        };
+
+        video.onerror = function () {
+            reject(new Error('Failed to load video metadata.'));
+        };
+
+        video.src = URL.createObjectURL(videoBlob);
+    });
+};

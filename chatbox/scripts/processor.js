@@ -1,4 +1,4 @@
-import { formatTimestamp, convertToAudio } from "./utils";
+import { formatTimestamp, convertToAudio, getVideoDuration } from "./utils";
 import { sendTranscript } from "./gpt";
 import { transcribeAudio } from "./speech";
 
@@ -14,11 +14,19 @@ export const transcribeVideo = () => {
 
         fetch(videoLink)
             .then((response) => response.blob()) // Fetch the video content
-            .then(async (videoBlob) => {
+            .then((videoBlob) => {
+                getVideoDuration(videoBlob).then(async (duration) => {
+                    if (duration <= 1800) {
+                        const audioFile = await convertToAudio(videoBlob);
+                        console.log(await transcribeAudio(audioFile));
+                    } else {
+                        alert("The video's duration is longer than 30 minutes, not transcribable!");
+                    }
+                }).catch((error) => {
+                    console.error('Error:', error.message);
+                });                
                 // Perform video to audio conversion using a library or service
                 // For this example, assume 'convertToAudio' is a function that takes the video blob and returns audio in WAV format.
-                const audioFile = await convertToAudio(videoBlob);
-                console.log(await transcribeAudio(audioFile));
             })
             // .then((audioData) => {
             //     // Upload the converted audio to Azure Cosmos DB

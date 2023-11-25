@@ -1,5 +1,5 @@
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
-import { default as cors } from 'cors';
+import cors from 'cors';
 import express from 'express';
 import bodyParser from 'body-parser';
 import config from './config.js';
