@@ -1,51 +1,42 @@
-import { formatTimestamp, convertToAudio, getVideoDuration } from "./utils";
+import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage } from "./utils";
 import { sendTranscript } from "./gpt";
 import { transcribeAudio } from "./speech";
 
 // Transcribe video starts (detected when btn-transcribe is clicked)
 export const transcribeVideo = () => {
-    //Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
-
+    // Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
     var url = "";
 
     chrome.storage.session.get("videoLink").then(({ videoLink }) => {
         url = videoLink;
-        console.log(videoLink);
+        setLoadingMessage("pending", "No Transcripts found, starting the transcribing process...");
 
         fetch(videoLink)
             .then((response) => response.blob()) // Fetch the video content
-            .then((videoBlob) => {
-                getVideoDuration(videoBlob).then(async (duration) => {
+            .then(async (videoBlob) => {
+                try {
+                    const duration = await getVideoDuration(videoBlob);
+
                     if (duration <= 1800) {
+                        setLoadingMessage("pending", "Converting video to audio format...");
                         const audioFile = await convertToAudio(videoBlob);
-                        console.log(await transcribeAudio(audioFile));
+                        setLoadingMessage("pending", "Transcribing the audio file...");
+                        const transcript = await transcribeAudio(audioFile);
+                        setLoadingMessage("success", "Transcribing of audio is successful!");
+                        console.log(transcript);
                     } else {
                         alert("The video's duration is longer than 30 minutes, not transcribable!");
                     }
-                }).catch((error) => {
+                } catch (error) {
                     console.error('Error:', error.message);
-                });                
-                // Perform video to audio conversion using a library or service
-                // For this example, assume 'convertToAudio' is a function that takes the video blob and returns audio in WAV format.
+                }
+
+
             })
-            // .then((audioData) => {
-            //     // Upload the converted audio to Azure Cosmos DB
-            //     // Make sure you have the Cosmos DB credentials and collection details
-            //     // Use the Azure Cosmos DB JavaScript SDK as shown in the previous response.
-            // })
             .catch((error) => {
                 console.error('Error:', error);
             });
     });
-
-    // const status = "failed";
-
-    // if (status === "success") {
-    //     return true;
-    // } else if (status === "failed") {
-    //     alert("Something went wrong!");
-    //     return false;
-    // }
 }
 
 // Handle video transcript

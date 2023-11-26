@@ -52,3 +52,17 @@ export const getVideoDuration = async (videoBlob) => {
         video.src = URL.createObjectURL(videoBlob);
     });
 };
+
+export const setLoadingMessage = (status, message) => {
+    const loading = document.getElementById("loading");
+    const success = document.getElementById("success");
+    const loadingMessage = document.getElementById("loading-message");
+
+    if (status == "pending") {
+        loadingMessage.innerHTML = message; //InnerHTML instead of textContent and innerText for browser compatibility.
+        loading.style.display = "block";
+    } else {
+        loading.style.display = "none";
+
+    }
+}

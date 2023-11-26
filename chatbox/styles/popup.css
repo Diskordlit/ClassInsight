@@ -311,13 +311,23 @@ input[type="text"]:focus {
     }
 }
 
-.loading-message {
+.loading-message, .success-message {
     text-align: center;
-    font-size: 20px;
+    font-size: 16px;
     text-transform: uppercase;
     font-weight: 600;
-    color: var(--turquoise);
+    color: var(--bright-maroon);
     text-shadow: 1px 2px 3px black;
+}
+
+/* Success */
+.success-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 70px;
+    color: var(--turquoise);
+    filter: drop-shadow(1px 2px 3px black);
 }
 
 /* Lower Content Container */

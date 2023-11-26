@@ -10,7 +10,7 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.raw({ type: 'audio/wav', limit: '50mb' }));
 
-app.post('/transcribe', async (req, res) => {
+app.post('/transcribe', (req, res) => {
   try {
     const audioBuffer = req.body;
 
@@ -29,30 +29,33 @@ app.post('/transcribe', async (req, res) => {
     const transcriber = new sdk.ConversationTranscriber(speechConfig, audioConfig);
 
     // Define event handlers
-    transcriber.sessionStarted = (s, e) => {
-      console.log(`(sessionStarted) SessionId: ${e.sessionId}`);
-    };
-    transcriber.sessionStopped = (s, e) => {
-      console.log(`(sessionStopped) SessionId: ${e.sessionId}`);
-    };
-    transcriber.canceled = (s, e) => {
-      console.log(`(canceled) ${e.errorDetails}`);
-      res.status(500).json({ error: 'Transcription error' });
-    };
+    const transcriptResults = []; // to accumulate results
     transcriber.transcribed = (s, e) => {
       console.log(`(transcribed) text: ${e.result.text}`);
       console.log(`(transcribed) speakerId: ${e.result.speakerId}`);
-      res.json({ text: e.result.text, speakerId: e.result.speakerId });
+      transcriptResults.push({ text: e.result.text, speakerId: e.result.speakerId });
     };
 
     // Begin conversation transcription
-    await transcriber.startTranscribingAsync(
-      () => {},
+    transcriber.startTranscribingAsync(
+      () => {
+        // Transcription started successfully
+        console.log("Transcription started");
+      },
       (err) => {
         console.trace(`err - starting transcription: ${err}`);
         res.status(500).json({ error: 'Transcription error' });
       }
     );
+
+    // Handle completion using a timeout (adjust as needed)
+    setTimeout(() => {
+      // Stop transcription after a certain period
+      transcriber.stopTranscribingAsync();
+
+      // Send accumulated results
+      res.json(transcriptResults);
+    }, 30000); // 30 seconds as an example, adjust as needed
   } catch (error) {
     console.error(`Unexpected error: ${error.message}`);
     res.status(500).json({ error: 'Internal server error' });

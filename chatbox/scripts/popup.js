@@ -15,8 +15,6 @@ function startConversation() {
     } else {
         alert("Something Went Wrong!");
     }
-
-    alert("Add Start Conversation Function!");
 }
 
 async function startUp() {
