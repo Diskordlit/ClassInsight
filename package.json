@@ -28,6 +28,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@azure/cosmos": "^4.0.0",
     "@azure/openai": "^1.0.0-beta.7",
     "browserify-fs": "^1.0.0",
     "copy-webpack-plugin": "^11.0.0",
