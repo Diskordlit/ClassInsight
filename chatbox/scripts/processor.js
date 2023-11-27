@@ -21,7 +21,7 @@ export const transcribeVideo = () => {
                         setLoadingMessage("pending", "Converting video to audio format...");
                         const audioFile = await convertToAudio(videoBlob);
                         setLoadingMessage("pending", "Transcribing the audio file...");
-                        const transcript = await transcribeAudio(audioFile);
+                        const transcript = await transcribeAudio(audioFile, duration);
                         setLoadingMessage("success", "Transcribing of audio is successful!");
                         console.log(transcript);
                     } else {

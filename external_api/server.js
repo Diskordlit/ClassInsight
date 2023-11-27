@@ -13,6 +13,7 @@ app.use(bodyParser.raw({ type: 'audio/wav', limit: '50mb' }));
 app.post('/transcribe', (req, res) => {
   try {
     const audioBuffer = req.body;
+    const audioDuration = req.query.audioDuration;
 
     // Create the push stream
     const pushStream = sdk.AudioInputStream.createPushStream();
@@ -55,7 +56,7 @@ app.post('/transcribe', (req, res) => {
 
       // Send accumulated results
       res.json(transcriptResults);
-    }, 30000); // 30 seconds as an example, adjust as needed
+    }, audioDuration * 1000); // 30 seconds as an example, adjust as needed
   } catch (error) {
     console.error(`Unexpected error: ${error.message}`);
     res.status(500).json({ error: 'Internal server error' });

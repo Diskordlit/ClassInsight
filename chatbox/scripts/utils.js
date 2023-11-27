@@ -59,10 +59,14 @@ export const setLoadingMessage = (status, message) => {
     const loadingMessage = document.getElementById("loading-message");
 
     if (status == "pending") {
+        success.style.display = "none";
         loadingMessage.innerHTML = message; //InnerHTML instead of textContent and innerText for browser compatibility.
         loading.style.display = "block";
     } else {
         loading.style.display = "none";
-
+        success.style.display = "block";
+        setTimeout(() => {
+            success.style.display = "none";
+        }, 3000);
     }
 }

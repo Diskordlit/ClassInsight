@@ -1,6 +1,6 @@
-export const transcribeAudio = async (audioFile) => {
+export const transcribeAudio = async (audioFile, audioDuration) => {
   try {
-    const response = await fetch('http://localhost:3000/transcribe', {
+    const response = await fetch(`http://localhost:3000/transcribe?audioDuration=${audioDuration}`, {
       method: 'POST',
       body: audioFile,
       headers: {

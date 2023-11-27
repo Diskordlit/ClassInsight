@@ -321,6 +321,10 @@ input[type="text"]:focus {
 }
 
 /* Success */
+.success {
+    display: none;
+}
+
 .success-icon {
     display: flex;
     justify-content: center;
