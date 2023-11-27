@@ -2,7 +2,7 @@ import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import cors from 'cors';
 import express from 'express';
 import bodyParser from 'body-parser';
-import config from './config.js';
+import config from '../chatbox/scripts/config.js';
 
 const app = express();
 const port = 3000;
@@ -24,6 +24,7 @@ app.post('/transcribe', (req, res) => {
 
     // Set up speech config and audio config
     const speechConfig = sdk.SpeechConfig.fromSubscription(config.AZURE_SPEECH_KEY, config.AZURE_SPEECH_REGION);
+    //speechConfig.requestWordLevelTimestamps();
     const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
 
     // Create the conversation transcriber
@@ -32,9 +33,32 @@ app.post('/transcribe', (req, res) => {
     // Define event handlers
     const transcriptResults = []; // to accumulate results
     transcriber.transcribed = (s, e) => {
-      console.log(`(transcribed) text: ${e.result.text}`);
-      console.log(`(transcribed) speakerId: ${e.result.speakerId}`);
-      transcriptResults.push({ text: e.result.text, speakerId: e.result.speakerId });
+      let sentenceTimestamps = {};
+
+      // Process sentence-level timestamps
+      if (e.result.privJson) {
+        const jsonResult = JSON.parse(e.result.privJson);
+        const startTime = jsonResult.Offset / 10000; // Convert offset from 100-nanosecond units to milliseconds
+        const endTime = (jsonResult.Offset + jsonResult.Duration) / 10000; // Convert duration to milliseconds
+
+        // Convert endTime to minutes and seconds format
+        const minutes = Math.floor(startTime / 60000);
+        const seconds = ((startTime % 60000) / 1000).toFixed(0);
+
+        sentenceTimestamps = {
+          startTime: startTime,
+          endTime: endTime,
+          formattedStartTime: `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`,
+        };
+      }
+
+      transcriptResults.push({
+        text: e.result.text,
+        speakerId: e.result.speakerId,
+        timestamp: sentenceTimestamps.formattedStartTime
+      });
+
+      console.log(transcriptResults);
     };
 
     // Begin conversation transcription

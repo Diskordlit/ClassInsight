@@ -10,28 +10,28 @@ const client = new CosmosClient({ endpoint, key });
 const database = client.database("ClassInsight");
 const container = database.container("Transcripts");
 
-async function saveTranscript(url, transcript){
+async function saveTranscript(url, transcript) {
     const newItem = {
-    id: url,
-    transcript: transcript
+        id: url,
+        transcript: transcript
     };
 
     // Call the create method with the item and options
     const { resource: createdItem } = await container.items.create(newItem, {
-    partitionKey: newItem._partitionKey
+        partitionKey: newItem._partitionKey
     });
 
     // Log the result
     console.log(`Created item with id: ${createdItem.id}`);
 }
 
-async function getTranscript(url){
+async function getTranscript(url) {
     try {
         const item = container.item(url, url);
 
         // Call the read method with the options
         const { resource: readItem } = await item.read({
-        partitionKey: item.partitionKey
+            partitionKey: item.partitionKey
         });
 
         // Log the result
@@ -49,12 +49,12 @@ module.exports = { saveTranscript, getTranscript }
 // STEP 1: call getTranscript(url), transcript will be returned if already stored
 // STEP 2: If 0 is returned, it means that a transcript has not already been created for the video
 // STEP 3: Therefore run the code to convert the video -> audio -> transcript
-// STEP 4: Only then call saveTranscript by passing in the `url` as a string and the `transcript` as a JSON array 
+// STEP 4: Only then call saveTranscript by passing in the `url` as a string and the `transcript` as a JSON array
 
 
 // ---- SAMPLE TEST CODE (can delete if not needed) ----
 // ====  run `node.exe chatbox/scripts/database.js`  ====
-// 
+//
 //
 // const sampleUrl = "www.azure.com"
 // const sampleTranscript = [
