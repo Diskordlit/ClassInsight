@@ -1,5 +1,6 @@
 const { CosmosClient } = require("@azure/cosmos");
 const config = require('./config');
+import { getDbIdFromUrl } from "./utils";
 
 // Initialize the Cosmos client
 const endpoint = config.AZURE_COSMODB_ENDPOINT;
@@ -10,44 +11,61 @@ const client = new CosmosClient({ endpoint, key });
 const database = client.database("ClassInsight");
 const container = database.container("Transcripts");
 
-async function saveTranscript(url, transcript) {
-    const newItem = {
-        id: url,
-        transcript: transcript
-    };
-
-    // Call the create method with the item and options
-    const { resource: createdItem } = await container.items.create(newItem, {
-        partitionKey: newItem._partitionKey
-    });
-
-    // Log the result
-    console.log(`Created item with id: ${createdItem.id}`);
-}
-
-async function getTranscript(url) {
+export async function saveTranscript(url, transcript) {
     try {
-        const item = container.item(url, url);
+        const newItem = {
+            id: getDbIdFromUrl(url),
+            transcript: transcript
+        };
 
-        // Call the read method with the options
-        const { resource: readItem } = await item.read({
-            partitionKey: item.partitionKey
+        // Call the create method with the item and options
+        const { resource: createdItem } = await container.items.create(newItem, {
+            partitionKey: newItem._partitionKey
         });
 
         // Log the result
-        console.log(`Read item with id: ${readItem.id}`);
-
-        return readItem;
+        console.log(`Created item with id: ${createdItem.id}`);
     } catch (e) {
-        return 0; // item does not exist
+        console.log("Save Transcript Error: ", e);
     }
 }
 
-module.exports = { saveTranscript, getTranscript }
+// export async function getTranscript(url) {
+//     try {
+//         const item = container.item(url, url);
+
+//         // Call the read method with the options
+//         const { resource: readItem } = await item.read({
+//             partitionKey: item.partitionKey
+//         });
+
+//         // Log the result
+//         console.log(`Read item with id: ${readItem.id}`);
+
+//         return readItem;
+//     } catch (e) {
+//         console.log("Get Transcript Error: ", e);
+//         return false; // item does not exist
+//     }
+// }
+
+export async function getTranscript(url) {
+    try {
+        const { resources: items } = await container.items.readAll().fetchAll();
+        const readItem = items.find((i) => i.id === getDbIdFromUrl(url));
+
+        // Log the result
+        console.log(`Read item with id: ${readItem.id}`);
+        return readItem;
+    } catch (e) {
+        console.log("Get Transcript Error: ", e);
+        return false; // item does not exist
+    }
+}
 
 // HOW TO USE
 // STEP 1: call getTranscript(url), transcript will be returned if already stored
-// STEP 2: If 0 is returned, it means that a transcript has not already been created for the video
+// STEP 2: If false is returned, it means that a transcript has not already been created for the video
 // STEP 3: Therefore run the code to convert the video -> audio -> transcript
 // STEP 4: Only then call saveTranscript by passing in the `url` as a string and the `transcript` as a JSON array
 

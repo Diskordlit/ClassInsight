@@ -7,7 +7,7 @@ export const fetchVideoTranscriptLink = async () => {
 
     await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: getVideoTranscriptLink,
+        function: setVideoTranscriptLink,
     });
 }
 
@@ -19,18 +19,18 @@ export const fetchStreamVideoLink = async () => {
 
     await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: getStreamVideoLink,
+        function: setStreamVideoLink,
     });
 }
 
 // Set video transcript link onto chrome session
-export const getVideoTranscriptLink = () => {
+export const setVideoTranscriptLink = () => {
     let videoTranscriptLink = document.querySelector("video > track").src;
     chrome.storage.session.set({ videoTranscriptLink, videoUrl: window.location.href });
 }
 
 // Set video transcript link onto chrome session
-export const getStreamVideoLink = () => {
+export const setStreamVideoLink = () => {
     let videoLink = document.querySelector("video").src;
     chrome.storage.session.set({ videoLink: videoLink });
 }

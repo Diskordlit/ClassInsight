@@ -1,9 +1,10 @@
-import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, turnOffLoadingMessage } from "./utils";
+import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, turnOffLoadingMessage, isCloseNeedTranscribeSection } from "./utils";
 import { sendTranscript } from "./gpt";
 import { transcribeAudio } from "./speech";
 import { addSystemPrompt } from "./input.js";
+import { saveTranscript } from "./database.js";
 
-function startConversation() {
+export function startConversation() {
     const noTranscribe = document.querySelector(".chatbox-container");
     const status = "success";
 
@@ -34,9 +35,12 @@ export const transcribeVideo = () => {
                         setLoadingMessage("pending", "Transcribing the audio file...");
                         const transcript = await transcribeAudio(audioFile, duration);
                         setLoadingMessage("success", "Transcribing of audio is successful!");
-                        setTimeout(() => {
+                        const formattedTranscript = transcript.map((t) => { return { text: t.text, timestamp: t.timestamp } });
+                        await saveTranscript(videoLink, formattedTranscript);
+                        setTimeout(async () => {
                             turnOffLoadingMessage();
-                            sendTranscript(transcript.map((t) => { return { text: t.text, timestamp: t.timestamp } }));
+                            isCloseNeedTranscribeSection(true);
+                            sendTranscript(formattedTranscript);
                             startConversation("");
                         }, 2000);
                     } else {
@@ -54,15 +58,11 @@ export const transcribeVideo = () => {
 
 // Handle video transcript (automatically from video link if detectable) (if not click on the btn-transcribe)
 export const handleTranscriptFromVideoLink = (videoTranscriptLinkElement) => {
-    const needTranscribeURL = document.querySelector(".need-transcribe");
-    const noTranscribe = document.querySelector(".no-transcribe");
-
     console.log(videoTranscriptLinkElement);
     if (!videoTranscriptLinkElement) {
-        needTranscribeURL.style.display = "block"; // Change back to "block" later
-        noTranscribe.style.display = "none";
+        isCloseNeedTranscribeSection(false);
     } else {
-        needTranscribeURL.style.display = "block"; // Change back to "block" later
+        isCloseNeedTranscribeSection(true);
         videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, videoTranscriptLinkElement.indexOf("streamContent") + "streamContent".length) + "?format=json&applymediaedits=false";
 
         // Fetch the JSON data from the API
@@ -73,7 +73,7 @@ export const handleTranscriptFromVideoLink = (videoTranscriptLinkElement) => {
                 }
                 return response.json(); // Parse the response as JSON
             })
-            .then((jsonData) => {
+            .then(async (jsonData) => {
                 // Once you have the JSON data, you can process it as shown in the previous example
                 const filteredEntries = [];
                 for (const entry of jsonData.entries) {
@@ -84,13 +84,13 @@ export const handleTranscriptFromVideoLink = (videoTranscriptLinkElement) => {
                 }
                 // Now, you can work with the filteredEntries array
                 console.log(filteredEntries);
+                // Save the filteredEntries to DB
+                await saveTranscript(videoTranscriptLinkElement, filteredEntries);
                 sendTranscript(filteredEntries);
             })
             .catch((error) => {
                 console.error(`Fetch error: ${error}`);
             });
-
-        needTranscribeURL.style.display = "none";
     }
 
     // Add a function to get the JSON to be passed in as context

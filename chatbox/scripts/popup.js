@@ -1,6 +1,9 @@
 import { addUserPrompt } from "./input.js";
 import { fetchVideoTranscriptLink, isVideoTranscriptLink, fetchStreamVideoLink } from "./data.js";
-import { handleTranscriptFromVideoLink, transcribeVideo } from "./processor.js";
+import { handleTranscriptFromVideoLink, startConversation, transcribeVideo } from "./processor.js";
+import { getTranscript } from "./database.js";
+import { sendTranscript } from "./gpt.js";
+import { isCloseNeedTranscribeSection } from "./utils.js";
 
 // to enable it in all content scripts 
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
@@ -17,25 +20,41 @@ async function startUp() {
         function: isVideoTranscriptLink,
     }).then((res) => isValid = res[0].result)
         .then((_) => {
-            chrome.storage.session.get(["videoTranscriptLink", "videoUrl"]).then(({ videoTranscriptLink, videoUrl }) => {
+            chrome.storage.session.get(["videoTranscriptLink", "videoUrl"]).then(async ({ videoTranscriptLink, videoUrl }) => {
                 if (isValid) {
                     if (videoTranscriptLink && videoUrl == tab.url) {
                         // If 'videoTranscriptLink' exists in storage, handle it
-                        handleTranscriptFromVideoLink(videoTranscriptLink);
+                        const previouslySavedTransriptUrl = await getTranscript(videoTranscriptLink);
+                        if (previouslySavedTransriptUrl) {
+                            isCloseNeedTranscribeSection(true);
+                            sendTranscript(previouslySavedTransriptUrl.transcript);
+                            startConversation("");
+                        } else {
+                            handleTranscriptFromVideoLink(videoTranscriptLink);
+                        }
                     } else {
                         // If 'videoTranscriptLink' does not exist, perform other tasks
                         fetchVideoTranscriptLink();
                         startUp();
                     }
                 } else {
-                    fetchStreamVideoLink();
-                    // Clear the 'videoTranscriptLink' in storage
-                    chrome.storage.session.remove(["videoTranscriptLink", "videoUrl"], function () {
-                        if (chrome.runtime.lastError) {
-                            console.error(chrome.runtime.lastError);
-                        } else {
-                            console.log('videoTranscriptLink & videoUrl removed from storage');
-                        }
+                    fetchStreamVideoLink().then(() => {
+                        chrome.storage.session.get(["videoLink"]).then(async ({ videoLink }) => {
+                            const previouslySavedTransriptUrl = await getTranscript(videoLink);
+                            if (previouslySavedTransriptUrl) {
+                                isCloseNeedTranscribeSection(true);
+                                sendTranscript(previouslySavedTransriptUrl.transcript);
+                                startConversation("");
+                            }
+                        });
+                        // Clear the 'videoTranscriptLink' in storage
+                        chrome.storage.session.remove(["videoTranscriptLink", "videoUrl"], function () {
+                            if (chrome.runtime.lastError) {
+                                console.error(chrome.runtime.lastError);
+                            } else {
+                                console.log('videoTranscriptLink & videoUrl removed from storage');
+                            }
+                        });
                     });
                 }
             }).catch((err) => {

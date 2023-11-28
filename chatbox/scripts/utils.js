@@ -77,3 +77,19 @@ export const turnOffLoadingMessage = () => {
     success.style.display = "none";
     loadingMessage.style.display = "none";
 }
+
+export const getDbIdFromUrl = (url) => {
+    return btoa(url).replace(/\//g, '*').replace(/\=/g, '`').slice(30, 80);
+}
+
+export const isCloseNeedTranscribeSection = (isClose) => {
+    const needTranscribeURL = document.querySelector(".need-transcribe");
+    const noTranscribe = document.querySelector(".no-transcribe");
+
+    if (!isClose) {
+        needTranscribeURL.style.display = "block"; // Change back to "block" later
+        noTranscribe.style.display = "none";
+    } else {
+        needTranscribeURL.style.display = "none";
+    }
+}
