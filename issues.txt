@@ -1,0 +1,2 @@
+1. video transcript link (blob URL)
+2. GPT can only ask ONCE (sample error encoutner [object][Object])

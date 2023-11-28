@@ -1,21 +1,9 @@
-import { addUserPrompt, addSystemPrompt } from "./input.js";
+import { addUserPrompt } from "./input.js";
 import { fetchVideoTranscriptLink, isVideoTranscriptLink, fetchStreamVideoLink } from "./data.js";
-import { handleVideoTranscript, transcribeVideo } from "./processor.js";
+import { handleTranscriptFromVideoLink, transcribeVideo } from "./processor.js";
 
 // to enable it in all content scripts 
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
-
-function startConversation() {
-    const noTranscribe = document.querySelector(".chatbox-container");
-    const status = "success";
-
-    if (status === "success") {
-        noTranscribe.style.display = "block";
-        addSystemPrompt("Hello there! What would you like to know about the video?");
-    } else {
-        alert("Something Went Wrong!");
-    }
-}
 
 async function startUp() {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -33,7 +21,7 @@ async function startUp() {
                 if (isValid) {
                     if (videoTranscriptLink && videoUrl == tab.url) {
                         // If 'videoTranscriptLink' exists in storage, handle it
-                        handleVideoTranscript(videoTranscriptLink, startConversation);
+                        handleTranscriptFromVideoLink(videoTranscriptLink);
                     } else {
                         // If 'videoTranscriptLink' does not exist, perform other tasks
                         fetchVideoTranscriptLink();

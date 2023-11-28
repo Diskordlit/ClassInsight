@@ -65,8 +65,15 @@ export const setLoadingMessage = (status, message) => {
     } else {
         loading.style.display = "none";
         success.style.display = "block";
-        setTimeout(() => {
-            success.style.display = "none";
-        }, 3000);
     }
+}
+
+export const turnOffLoadingMessage = () => {
+    const loading = document.getElementById("loading");
+    const success = document.getElementById("success");
+    const loadingMessage = document.getElementById("loading-message");
+    
+    loading.style.display = "none";
+    success.style.display = "none";
+    loadingMessage.style.display = "none";
 }
