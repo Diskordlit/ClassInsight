@@ -37,10 +37,10 @@ async function askGPT(prompt) {
     messages.push({ role: "user", content: prompt });
 
     const result = await client.getChatCompletions(deploymentId, messages);
-
     for (const choice of result.choices) {
-      messages.push({ role: "assistant", content: choice });
-      return choice.message.content;
+      const replyMessage = choice.message.content;
+      messages.push({ role: "assistant", content: replyMessage });
+      return replyMessage;
     }
   } catch (err) {
     console.error("The sample encountered an error:", err);
