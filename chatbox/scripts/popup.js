@@ -1,6 +1,7 @@
 import { addUserPrompt, addSystemPrompt } from "./input.js";
 import { fetchVideoTranscriptLink, isVideoTranscriptLink, fetchStreamVideoLink } from "./data.js";
-import { handleVideoTranscript, transcribeVideo, shareConversation } from "./processor.js";
+import { handleTranscriptFromVideoLink, transcribeVideo, shareConversation } from "./processor.js";
+import { setLoadingMessage } from "./utils.js";
 
 // to enable it in all content scripts 
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
@@ -30,11 +31,10 @@ async function startUp() {
         function: isVideoTranscriptLink,
     }).then((res) => isValid = res[0].result)
         .then((_) => {
-            chrome.storage.session.get(["videoTranscriptLink", "videoUrl"]).then(({ videoTranscriptLink, videoUrl }) => {
+            chrome.storage.session.get(["videoTranscriptLink", "videoUrl"]).then(async ({ videoTranscriptLink, videoUrl }) => {
                 if (isValid) {
                     if (videoTranscriptLink && videoUrl == tab.url) {
-                        // If 'videoTranscriptLink' exists in storage, handle it
-                        handleVideoTranscript(videoTranscriptLink);
+                        handleTranscriptFromVideoLink(videoTranscriptLink);
                     } else {
                         // If 'videoTranscriptLink' does not exist, perform other tasks
                         fetchVideoTranscriptLink();
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
         //startUp();
     })
 
-    .shareBtn.addEventListener('click', () => {
+    shareBtn.addEventListener('click', () => {
         shareConversation();
     })
 });

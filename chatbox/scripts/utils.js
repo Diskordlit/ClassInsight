@@ -61,14 +61,41 @@ export const setLoadingMessage = (status, message) => {
 
     if (status == "pending") {
         success.style.display = "none";
-        loadingMessage.textContent = message; //InnerHTML instead of textContent and innerText for browser compatibility.
+        loadingMessage.textContent = message;
         loading.style.display = "block";
     } else {
         loading.style.display = "none";
         success.style.display = "block";
         successMessage.textContent = message;
+
         setTimeout(() => {
             success.style.display = "none";
         }, 3000);
+    }
+}
+
+export const turnOffLoadingMessage = () => {
+    const loading = document.getElementById("loading");
+    const success = document.getElementById("success");
+    const loadingMessage = document.getElementById("loading-message");
+    
+    loading.style.display = "none";
+    success.style.display = "none";
+    loadingMessage.style.display = "none";
+}
+
+export const getDbIdFromUrl = (url) => {
+    return btoa(url).replace(/\//g, '*').replace(/\=/g, '`').slice(30, 80);
+}
+
+export const isCloseNeedTranscribeSection = (isClose) => {
+    const needTranscribeURL = document.querySelector(".need-transcribe");
+    const noNeedTranscribe = document.querySelector(".no-transcribe");
+
+    if (!isClose) {
+        needTranscribeURL.style.display = "block"; // Change back to "block" later
+        noNeedTranscribe.style.display = "none";
+    } else {
+        needTranscribeURL.style.display = "none";
     }
 }

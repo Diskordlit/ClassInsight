@@ -1,7 +1,7 @@
-import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage } from "./utils";
+import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, turnOffLoadingMessage, isCloseNeedTranscribeSection } from "./utils";
 import { sendTranscript } from "./gpt";
 import { transcribeAudio } from "./speech";
-import { getTranscript } from "./database";
+import { getTranscript, saveTranscript } from "./database";
 import { startConversation } from "./popup";
 
 const needTranscribe = document.querySelector(".need-transcribe");
@@ -12,16 +12,14 @@ export const transcribeVideo = () => {
     // Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
     const transcribeBtn = document.getElementById("transcribeBtn");
     const missingTranscribeMsg = document.getElementById("missing-transcript-msg");
-    var url = "";
 
     chrome.storage.session.get("videoLink").then(({ videoLink }) => {
-        url = videoLink;
         transcribeBtn.style.display = "none";
         missingTranscribeMsg.style.display = "none";
         setLoadingMessage("pending", "No Transcripts found, checking if transcript exists..."); //Check if Transcript exists.
-        let transcript = getTranscript(url);
+        let transcript = getTranscript(videoLink);
 
-        if (transcript === 0) {
+        if (!transcript) {
             setLoadingMessage("pending", "No existing Transcripts found, fetching video...");
             fetch(videoLink)
                 .then((response) => response.blob()) // Fetch the video content
@@ -33,10 +31,11 @@ export const transcribeVideo = () => {
                             setLoadingMessage("pending", "Converting video to audio format...");
                             const audioFile = await convertToAudio(videoBlob);
                             setLoadingMessage("pending", "Transcribing the audio file...");
-                            transcript = await transcribeAudio(audioFile, duration);
+                            const newTranscript = await transcribeAudio(audioFile, duration);
+                            await saveTranscript(videoLink, newTranscript);
                             setLoadingMessage("success", "Starting Conversation...");
-                            sendTranscript(transcript); //remove loading and everything show Conversation.
-                            //Need to Add save transcribe to DB function here <-- Ryan
+                            sendTranscript(newTranscript); //remove loading and everything show Conversation.
+                            turnOffLoadingMessage();
                             startConversation("success");
                         } else {
                             alert("The video's duration is longer than 30 minutes, not transcribable!");
@@ -50,66 +49,54 @@ export const transcribeVideo = () => {
                 });
         } else {
             sendTranscript(transcript); //remove loading and everything show Conversation.
+            turnOffLoadingMessage();
             startConversation("success");
         }
     });
 
 }
 
-// Handle video transcript
-export const handleVideoTranscript = (videoTranscriptLinkElement) => {
-
+// Handle video transcript (automatically from video link if detectable) (if not click on the btn-transcribe)
+export const handleTranscriptFromVideoLink = (videoTranscriptLinkElement) => {
     console.log(videoTranscriptLinkElement);
     if (!videoTranscriptLinkElement) {
-        needTranscribe.style.display = "block";
-        noNeedTranscribe.style.display = "none";
+        isCloseNeedTranscribeSection(false);
     } else {
-        needTranscribe.style.display = "none";
-        noNeedTranscribe.style.display = "none";
+        isCloseNeedTranscribeSection(true);
         setLoadingMessage("pending", "Fetching existing transcript for context...");
         setTimeout(() => {
             videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, videoTranscriptLinkElement.indexOf("streamContent") + "streamContent".length) + "?format=json&applymediaedits=false";
-            handleTranscriptJSON(videoTranscriptLinkElement);
+            
+            fetch(videoTranscriptLinkElement)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.status}`);
+                }
+                return response.json(); // Parse the response as JSON
+            })
+            .then(async (jsonData) => {
+                // Once you have the JSON data, you can process it as shown in the previous example
+                const filteredEntries = [];
+                for (const entry of jsonData.entries) {
+                    const { text, startOffset } = entry;
+                    const formattedTimestamp = formatTimestamp(startOffset);
+                    const filteredEntry = { text, timestamp: formattedTimestamp };
+                    filteredEntries.push(filteredEntry);
+                }
+                // Now, you can work with the filteredEntries array
+                console.log(filteredEntries);
+                sendTranscript(filteredEntries);
+            })
+            .catch((error) => {
+                console.error(`Fetch error: ${error}`);
+            });
+
             setLoadingMessage("success", "Starting Conversation...");
             setTimeout(() => {
                 startConversation("success");
             }, 3000);
         }, 3000);
     }
-
-    // // Add a function to get the JSON to be passed in as context
-    // var tempContextHolder = "";
-    // callbackFn(tempContextHolder);
-}
-
-// Handle JSON transcript
-export const handleTranscriptJSON = (videoTranscriptLinkElement) => {
-
-    // Fetch the JSON data from the API
-    fetch(videoTranscriptLinkElement)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status}`);
-            }
-            return response.json(); // Parse the response as JSON
-        })
-        .then((jsonData) => {
-            // Once you have the JSON data, you can process it as shown in the previous example
-            const filteredEntries = [];
-
-            for (const entry of jsonData.entries) {
-                const { text, startOffset } = entry;
-                const formattedTimestamp = formatTimestamp(startOffset);
-                const filteredEntry = { text, timestamp: formattedTimestamp };
-                filteredEntries.push(filteredEntry);
-            }
-
-            // Now, you can work with the filteredEntries array
-            sendTranscript(filteredEntries);
-        })
-        .catch((error) => {
-            console.error(`Fetch error: ${error}`);
-        });
 }
 
 export const shareConversation = () => {

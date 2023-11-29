@@ -25,6 +25,8 @@
     "128": "/images/logo128.png"
   },
   "host_permissions": [
-    "https://www.doesthedogdie.com/"
+    "https://www.doesthedogdie.com/",
+    "https://classinsight-cosmodbb.documents.azure.com/",
+    "https://classinsight-cosmodbb-westus.documents.azure.com/"
   ]
 }
