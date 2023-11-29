@@ -34,6 +34,9 @@
                     </div>
                 </div>
                 <div class="other-actions-container">
+                    <button class="btnShare" id="shareBtn">
+                        <i class="fa fa-share-alt"></i>
+                    </button>
                     <button class="btnReset" id="resetBtn">
                         <i class="fa fa-refresh"></i>
                     </button>
@@ -43,21 +46,13 @@
             <!--Main Content-->
             <div class="main-content-container">
                 <div class="need-transcribe url-container">
-                    <input type="text" class="url-input">
+                    <!-- <input type="text" class="url-input"> -->
+                    <div class="missing-transcript-msg" id="missing-transcript-msg">
+                        No Transcript Found! Will you like to Transcribe the video?
+                    </div>
                     <button id="transcribeBtn" class="btn-transcribe" title="Transcribe">
-                        <i class="fa fa-language"></i>
+                        Transcribe <i class="fa fa-language"></i>
                     </button>
-                </div>
-
-                <div class="no-transcribe chatbox-container">
-                    <div class="conversation-container">
-                    </div>
-                    <div class="prompt-container">
-                        <textarea type="text" class="prompt-input" id="userInput"></textarea>
-                        <button id="sendBtn" class="btn-send">
-                            <i class="fa fa-paper-plane"></i>
-                        </button>
-                    </div>
                 </div>
 
                 <div class="loading" id="loading">
@@ -77,8 +72,19 @@
                     <div class="success-icon">
                         <i class="fa fa-check-circle"></i>
                     </div>
-                    <div class="success-message">
+                    <div class="success-message" id="success-message">
                         Successfully Transcribed the audio!
+                    </div>
+                </div>
+
+                <div class="no-transcribe chatbox-container">
+                    <div class="conversation-container">
+                    </div>
+                    <div class="prompt-container">
+                        <textarea type="text" class="prompt-input" id="userInput"></textarea>
+                        <button id="sendBtn" class="btn-send">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
                     </div>
                 </div>
             </div>

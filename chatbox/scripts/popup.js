@@ -1,16 +1,17 @@
 import { addUserPrompt, addSystemPrompt } from "./input.js";
 import { fetchVideoTranscriptLink, isVideoTranscriptLink, fetchStreamVideoLink } from "./data.js";
-import { handleVideoTranscript, transcribeVideo } from "./processor.js";
+import { handleVideoTranscript, transcribeVideo, shareConversation } from "./processor.js";
 
 // to enable it in all content scripts 
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
 
-function startConversation() {
-    const noTranscribe = document.querySelector(".chatbox-container");
-    const status = "success";
+export const startConversation = (status) => {
+    const noNeedTranscribe = document.querySelector(".no-transcribe");
+    const needTranscribe = document.querySelector(".need-transcribe");
 
     if (status === "success") {
-        noTranscribe.style.display = "block";
+        noNeedTranscribe.style.display = "block";
+        needTranscribe.style.display = "none";
         addSystemPrompt("Hello there! What would you like to know about the video?");
     } else {
         alert("Something Went Wrong!");
@@ -33,7 +34,7 @@ async function startUp() {
                 if (isValid) {
                     if (videoTranscriptLink && videoUrl == tab.url) {
                         // If 'videoTranscriptLink' exists in storage, handle it
-                        handleVideoTranscript(videoTranscriptLink, startConversation);
+                        handleVideoTranscript(videoTranscriptLink);
                     } else {
                         // If 'videoTranscriptLink' does not exist, perform other tasks
                         fetchVideoTranscriptLink();
@@ -61,10 +62,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     transcribeBtn.addEventListener('click', () => {
         transcribeVideo();
-        // const result = transcribeVideo();
-        // if (result) {
-        //     startConversation("");
-        // }
     });
 
     sendBtn.addEventListener('click', () => {
@@ -73,5 +70,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     resetBtn.addEventListener('click', () => {
         //startUp();
+    })
+
+    .shareBtn.addEventListener('click', () => {
+        shareConversation();
     })
 });

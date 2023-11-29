@@ -43,7 +43,18 @@ async function getTranscript(url) {
     }
 }
 
-module.exports = { saveTranscript, getTranscript }
+async function compareTranscriptURL (url) {
+    var transcript = getTranscript(url);
+
+
+    if (transcript !== 0) {
+        return transcript;
+    } else {
+        return "Transcript don't exist.";
+    }
+}
+
+module.exports = { saveTranscript, getTranscript, compareTranscriptURL }
 
 // HOW TO USE
 // STEP 1: call getTranscript(url), transcript will be returned if already stored
