@@ -1,6 +1,7 @@
 import { addUserPrompt } from "./input.js";
 import { fetchVideoTranscriptLink, isVideoTranscriptLink, fetchStreamVideoLink } from "./data.js";
 import { handleTranscriptFromVideoLink, transcribeVideo, shareConversation } from "./processor.js";
+import { resetConversation } from "./gpt.js";
 
 // to enable it in all content scripts 
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     resetBtn.addEventListener('click', () => {
-        //startUp();
+        resetConversation();
     })
 
     shareBtn.addEventListener('click', () => {

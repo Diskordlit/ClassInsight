@@ -1,5 +1,6 @@
 const { OpenAIClient, AzureKeyCredential } = require("@azure/openai");
 const config = require('./config');
+const input = require('./input');
 const endpoint = config.AZURE_OPENAI_ENDPOINT;
 const azureApiKey = config.AZURE_OPENAI_KEY;
 
@@ -18,7 +19,7 @@ var messages = [
               Some other rules to follow:
               - If there are any point forms, please only use an ordered list format, i.e. "1., 2., 3., etc".
               - Keep responses as short as possible at only about 50 tokens.
-              - Only answer questions related to the video only.
+              - Only answer questions related to the transcript obtained from the video only.
             `
   },
 ];
@@ -27,6 +28,15 @@ function sendTranscript(transcript) {
   messages.push(
     { role: "system", content: `The transcript for this video is as follows: ${JSON.stringify(transcript)}`}
   )
+}
+
+function resetConversation() {
+  const conversationContainer = document.getElementById("conversation-container");
+
+  messages = messages.slice(0, 2);
+  conversationContainer.innerHTML = "";
+
+  input.addSystemPrompt("Hello there! What would you like to know about the video?");
 }
 
 async function askGPT(prompt) {
@@ -48,4 +58,4 @@ async function askGPT(prompt) {
   }
 }
 
-module.exports = { askGPT, sendTranscript };
+module.exports = { askGPT, sendTranscript, resetConversation };

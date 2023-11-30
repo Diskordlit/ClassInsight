@@ -16,16 +16,17 @@ const startConversation = (status) => {
         alert("Something Went Wrong!");
     }
 }
+const noNeedTranscribe = document.querySelector(".no-transcribe");
 
 // Transcribe video starts (detected when btn-transcribe is clicked)
 export const transcribeVideo = () => {
     // Flow: Transcribe Video --> Pass in Context to StartConversation --> Start Displaying
-    const transcribeBtn = document.getElementById("transcribeBtn");
-    const missingTranscribeMsg = document.getElementById("missing-transcript-msg");
+    const needTranscribe = document.querySelector(".need-transcribe");
+    const loading = document.getElementById("loading");
 
-    chrome.storage.session.get("videoLink").then(async ({ videoLink }) => {
-        transcribeBtn.style.display = "none";
-        missingTranscribeMsg.style.display = "none";
+    chrome.storage.session.get("videoLink").then( async ({ videoLink }) => {
+        needTranscribe.style.display = "none";
+        loading.style.display = "block";
         setLoadingMessage("pending", "No Transcripts found, checking if transcript exists..."); //Check if Transcript exists.
         let transcript = await getTranscript(videoLink);
 
