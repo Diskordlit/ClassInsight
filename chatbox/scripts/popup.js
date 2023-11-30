@@ -1,23 +1,9 @@
-import { addUserPrompt, addSystemPrompt } from "./input.js";
+import { addUserPrompt } from "./input.js";
 import { fetchVideoTranscriptLink, isVideoTranscriptLink, fetchStreamVideoLink } from "./data.js";
 import { handleTranscriptFromVideoLink, transcribeVideo, shareConversation } from "./processor.js";
-import { setLoadingMessage } from "./utils.js";
 
 // to enable it in all content scripts 
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
-
-export const startConversation = (status) => {
-    const noNeedTranscribe = document.querySelector(".no-transcribe");
-    const needTranscribe = document.querySelector(".need-transcribe");
-
-    if (status === "success") {
-        noNeedTranscribe.style.display = "block";
-        needTranscribe.style.display = "none";
-        addSystemPrompt("Hello there! What would you like to know about the video?");
-    } else {
-        alert("Something Went Wrong!");
-    }
-}
 
 async function startUp() {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
