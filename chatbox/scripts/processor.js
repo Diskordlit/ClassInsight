@@ -34,8 +34,10 @@ export const transcribeVideo = () => {
                             await saveTranscript(videoLink, newTranscript);
                             setLoadingMessage("success", "Starting Conversation...");
                             sendTranscript(newTranscript); //remove loading and everything show Conversation.
-                            turnOffLoadingMessage();
-                            startConversation("success");
+                            setLoadingMessage("success", "Starting Conversation...");
+                            setTimeout(() => {
+                                startConversation("success");
+                            }, 3000);
                         } else {
                             alert("The video's duration is longer than 30 minutes, not transcribable!");
                         }
@@ -48,8 +50,10 @@ export const transcribeVideo = () => {
                 });
         } else {
             sendTranscript(transcript); //remove loading and everything show Conversation.
-            turnOffLoadingMessage();
-            startConversation("success");
+            setLoadingMessage("success", "Starting Conversation...");
+            setTimeout(() => {
+                startConversation("success");
+            }, 3000);
         }
     });
 
