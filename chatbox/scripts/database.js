@@ -30,25 +30,6 @@ export async function saveTranscript(url, transcript) {
     }
 }
 
-// export async function getTranscript(url) {
-//     try {
-//         const item = container.item(url, url);
-
-//         // Call the read method with the options
-//         const { resource: readItem } = await item.read({
-//             partitionKey: item.partitionKey
-//         });
-
-//         // Log the result
-//         console.log(`Read item with id: ${readItem.id}`);
-
-//         return readItem;
-//     } catch (e) {
-//         console.log("Get Transcript Error: ", e);
-//         return false; // item does not exist
-//     }
-// }
-
 export async function getTranscript(url) {
     try {
         const { resources: items } = await container.items.readAll().fetchAll();

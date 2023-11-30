@@ -76,6 +76,10 @@ body {
     transform: rotate(90deg);
 }
 
+.btnShare:hover {
+    color: var(--bright-maroon);
+}
+
 /* Main Content Container */
 .main-content-container {
     margin-bottom: 8px;
