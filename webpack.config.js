@@ -12,7 +12,8 @@ module.exports = {
         gpt: './chatbox/scripts/gpt.js',
         mp4_wav: './chatbox/scripts/mp4_wav.js',
         speech: './chatbox/scripts/speech.js',
-        database: './chatbox/scripts/database.js'
+        database: './chatbox/scripts/database.js',
+        injector: './chatbox/scripts/injector.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

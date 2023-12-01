@@ -2,9 +2,20 @@ import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, t
 import { sendTranscript } from "./gpt";
 import { transcribeAudio } from "./speech";
 import { getTranscript, saveTranscript } from "./database";
-import { startConversation } from "./popup";
+import { addSystemPrompt } from "./input.js";
 
-const noNeedTranscribe = document.querySelector(".no-transcribe");
+const startConversation = (status) => {
+    const noNeedTranscribe = document.querySelector(".no-transcribe");
+    const needTranscribe = document.querySelector(".need-transcribe");
+
+    if (status === "success") {
+        noNeedTranscribe.style.display = "block";
+        needTranscribe.style.display = "none";
+        addSystemPrompt("Hello there! What would you like to know about the video?");
+    } else {
+        alert("Something Went Wrong!");
+    }
+}
 
 // Transcribe video starts (detected when btn-transcribe is clicked)
 export const transcribeVideo = () => {
@@ -49,7 +60,7 @@ export const transcribeVideo = () => {
                     console.error('Error:', error);
                 });
         } else {
-            sendTranscript(transcript); //remove loading and everything show Conversation.
+            sendTranscript(transcript.transcript); //remove loading and everything show Conversation.
             setLoadingMessage("success", "Starting Conversation...");
             setTimeout(() => {
                 startConversation("success");
