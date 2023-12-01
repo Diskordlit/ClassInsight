@@ -1,3 +1,4 @@
+
 // Import Necessary style and fontawesome CSS files.
 var popupStyle = document.createElement("link");
 popupStyle.rel = "stylesheet";
@@ -28,61 +29,51 @@ document.head.appendChild(fontawesomeTwo);
 // Open Modal Button
 var openModalButton = document.createElement("button");
 openModalButton.classList.add("openModalButton");
+openModalButton.addEventListener("click", function () {
+    modalContainer.style.display = "block";
+    openModalButton.style.display = "none";
+});
 
-//Open Modal Logo
+// Open Modal Logo
 var openLogo = document.createElement("img");
 openLogo.classList.add("openIcon");
 openLogo.src = chrome.runtime.getURL("chatbox/styles/logo.png");
 openLogo.alt = "open";
 
+// Modal Container
+var modalContainer = document.createElement("div");
+modalContainer.classList.add("modalContainer");
+
+// Close Button Icon
+var closeIcon = document.createElement("i");
+closeIcon.classList.add("fa");
+closeIcon.classList.add("fa-times");
+closeIcon.classList.add("closeIcon");
+
+// Close Button
+var closeModalButton = document.createElement("button");
+closeModalButton.classList.add("closeModalButton");
+closeModalButton.addEventListener("click", function () {
+    modalContainer.style.display = "none";
+    openModalButton.style.display = "block";
+});
+
+closeModalButton.appendChild(closeIcon);
 openModalButton.appendChild(openLogo);
+modalContainer.appendChild(closeModalButton);
 document.body.appendChild(openModalButton);
+// Append the modal container to the body
+document.body.appendChild(modalContainer);
 
 // setTimeout function
 setTimeout(() => {
-    openModalButton.style.display = "block";
-
     // Iframe
     var extensionContainer = document.createElement("iframe");
     extensionContainer.classList.add("extension-container");
     extensionContainer.src = chrome.runtime.getURL("chatbox/views/popup.html");
 
-    // Modal Container
-    var modalContainer = document.createElement("div");
-    modalContainer.classList.add("modalContainer");
-
-    // Close Button Icon
-    var closeIcon = document.createElement("i");
-    closeIcon.classList.add("fa");
-    closeIcon.classList.add("fa-times");
-    closeIcon.classList.add("closeIcon");
-
-    // Close Button
-    var closeModalButton = document.createElement("button");
-    closeModalButton.classList.add("closeModalButton");
-    closeModalButton.addEventListener("click", function () {
-        modalContainer.style.display = "none";
-        openModalButton.style.display = "block";
-    });
-
-    closeModalButton.appendChild(closeIcon);
-
     // Add Iframe & Close Button to Modal
     modalContainer.appendChild(extensionContainer);
-    modalContainer.appendChild(closeModalButton);
-
-    // Create a function to open the modal
-    function openModal() {
-        modalContainer.style.display = "block";
-        openModalButton.style.display = "none";
-    }
-
-    // Attach a click event to the button
-    openModalButton.addEventListener("click", function () {
-        openModal();
-    });
-
-    // Append the modal container to the body
-    document.body.appendChild(modalContainer);
-
+    openModalButton.style.display = "block";
 }, 5000);
+
