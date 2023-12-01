@@ -122,12 +122,11 @@ export const exportConversation = async () => {
     let tabUrl = tab.url;
 
     var title = "<h1 style='text-align: center;'>ClassInsight Notes</h1>";
-    var videoTitle = `<p style='text-align: left;'><b>Video Title:</b> ${tabTitle}</p>`;
-    var videoLink = `<p style='text-align: left;'><b>Video Link:</b> ${tabUrl}</p>`;
+    var videoTitle = `<p style='text-align: left;'><b>Video:</b> <a href="${tabUrl}">${tabTitle}</a></p>`;
     var conversationSeparator = `<h1 style='text-align: left; text-decoration: underline;'>Conversation</h1>`;
     var conversation = formatConversation();
 
-    var content = title + "</br>" + videoTitle + videoLink + conversationSeparator + conversation;
+    var content = title + "</br>" + videoTitle + conversationSeparator + conversation;
 
     //Main Code for Exporting
     var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
