@@ -6,12 +6,15 @@ const conversationContainer = document.querySelector(".conversation-container");
 // Send user message to chatbox (after entered)
 export const addUserPrompt = async (inputField) => {
     let userInput = document.querySelector(inputField);
+    let time = getCurrentTime();
 
     if (userInput.value.trim() !== "") {
         const userResponse = document.createElement("div");
         userResponse.className = "user-response";
         userResponse.innerHTML = userInput.value +
-            '<span class="user-timestamp">' + getCurrentTime() + '</span>';
+            '<span class="user-timestamp">' + time + '</span>';
+        userResponse.setAttribute("data-role", "system");
+        userResponse.setAttribute("data-timestamp", time);
         conversationContainer.appendChild(userResponse);
 
         // Loading Function to be Added
@@ -30,6 +33,12 @@ export const addUserPrompt = async (inputField) => {
 export const addSystemPrompt = (message) => {
     const systemResponse = document.createElement("div");
     systemResponse.className = "system-response";
+
+    let time = getCurrentTime();
+
+    //Add Additional Attributes
+    systemResponse.setAttribute("data-role", "system");
+    systemResponse.setAttribute("data-timestamp", time);
 
     // Check if the message contains points (e.g., '1.', '2.')
     const hasPoints = /\d+\./.test(message);
@@ -56,7 +65,7 @@ export const addSystemPrompt = (message) => {
     }
 
     // Add timestamp to the system response
-    systemResponse.innerHTML += '<span class="system-timestamp">' + getCurrentTime() + '</span>';
+    systemResponse.innerHTML += '<span class="system-timestamp">' + time + '</span>';
 
     // Append the system response to the conversation container
     conversationContainer.appendChild(systemResponse);

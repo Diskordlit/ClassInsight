@@ -1,4 +1,4 @@
-import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, turnOffLoadingMessage, isCloseNeedTranscribeSection } from "./utils";
+import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, formatConversation, isCloseNeedTranscribeSection } from "./utils";
 import { sendTranscript } from "./gpt";
 import { transcribeAudio } from "./speech";
 import { getTranscript, saveTranscript } from "./database";
@@ -23,7 +23,7 @@ export const transcribeVideo = () => {
     const needTranscribe = document.querySelector(".need-transcribe");
     const loading = document.getElementById("loading");
 
-    chrome.storage.session.get("videoLink").then( async ({ videoLink }) => {
+    chrome.storage.session.get("videoLink").then(async ({ videoLink }) => {
         needTranscribe.style.display = "none";
         loading.style.display = "block";
         setLoadingMessage("pending", "No Transcripts found, checking if transcript exists..."); //Check if Transcript exists.
@@ -80,30 +80,30 @@ export const handleTranscriptFromVideoLink = (videoTranscriptLinkElement) => {
         setLoadingMessage("pending", "Fetching existing transcript for context...");
         setTimeout(() => {
             videoTranscriptLinkElement = videoTranscriptLinkElement.substring(0, videoTranscriptLinkElement.indexOf("streamContent") + "streamContent".length) + "?format=json&applymediaedits=false";
-            
+
             fetch(videoTranscriptLinkElement)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Network response was not ok: ${response.status}`);
-                }
-                return response.json(); // Parse the response as JSON
-            })
-            .then(async (jsonData) => {
-                // Once you have the JSON data, you can process it as shown in the previous example
-                const filteredEntries = [];
-                for (const entry of jsonData.entries) {
-                    const { text, startOffset } = entry;
-                    const formattedTimestamp = formatTimestamp(startOffset);
-                    const filteredEntry = { text, timestamp: formattedTimestamp };
-                    filteredEntries.push(filteredEntry);
-                }
-                // Now, you can work with the filteredEntries array
-                console.log(filteredEntries);
-                sendTranscript(filteredEntries);
-            })
-            .catch((error) => {
-                console.error(`Fetch error: ${error}`);
-            });
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.status}`);
+                    }
+                    return response.json(); // Parse the response as JSON
+                })
+                .then(async (jsonData) => {
+                    // Once you have the JSON data, you can process it as shown in the previous example
+                    const filteredEntries = [];
+                    for (const entry of jsonData.entries) {
+                        const { text, startOffset } = entry;
+                        const formattedTimestamp = formatTimestamp(startOffset);
+                        const filteredEntry = { text, timestamp: formattedTimestamp };
+                        filteredEntries.push(filteredEntry);
+                    }
+                    // Now, you can work with the filteredEntries array
+                    console.log(filteredEntries);
+                    sendTranscript(filteredEntries);
+                })
+                .catch((error) => {
+                    console.error(`Fetch error: ${error}`);
+                });
 
             setLoadingMessage("success", "Starting Conversation...");
             setTimeout(() => {
@@ -113,6 +113,35 @@ export const handleTranscriptFromVideoLink = (videoTranscriptLinkElement) => {
     }
 }
 
-export const shareConversation = () => {
+export const exportConversation = async () => {
 
+    //Formatting additional content
+    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    let tabTitle = tab.title;
+    let tabUrl = tab.url;
+
+    var title = "<h1 style='text-align: center;'>ClassInsight Notes</h1>";
+    var videoTitle = `<p style='text-align: left;'><b>Video Title:</b> ${tabTitle}</p>`;
+    var videoLink = `<p style='text-align: left;'><b>Video Link:</b> ${tabUrl}</p>`;
+    var conversationSeparator = `<h1 style='text-align: left; text-decoration: underline;'>Conversation</h1>`;
+    var conversation = formatConversation();
+
+    var content = title + "</br>" + videoTitle + videoLink + conversationSeparator + conversation;
+
+    //Main Code for Exporting
+    var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+        "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+        "xmlns='http://www.w3.org/TR/REC-html40'>" +
+        "<head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
+    var footer = "</body></html>";
+    var sourceHTML = header + content + footer;
+
+    var source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+    var fileDownload = document.createElement("a");
+    document.body.appendChild(fileDownload);
+    fileDownload.href = source;
+    fileDownload.download = 'classinsight-notes.doc';
+    fileDownload.click();
+    document.body.removeChild(fileDownload);
 }

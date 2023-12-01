@@ -78,7 +78,7 @@ export const turnOffLoadingMessage = () => {
     const loading = document.getElementById("loading");
     const success = document.getElementById("success");
     const loadingMessage = document.getElementById("loading-message");
-    
+
     loading.style.display = "none";
     success.style.display = "none";
     loadingMessage.style.display = "none";
@@ -98,4 +98,30 @@ export const isCloseNeedTranscribeSection = (isClose) => {
     } else {
         needTranscribeURL.style.display = "none";
     }
+}
+
+export const formatConversation = () => {
+    var conversationContainer = document.getElementById("conversation-container");
+
+    var formattedConversation = "";
+
+    // Traverse through each child div in the conversation container
+    for (let i = 0; i < conversationContainer.children.length; i++) {
+        var childDiv = conversationContainer.children[i];
+
+        // Extract role, message content, and timestamp from the child div
+        var role = childDiv.getAttribute("data-role");
+        var message = childDiv.textContent.trim();
+        var timeSent = childDiv.getAttribute("data-timestamp");
+
+        var messageWithoutTimestamp = message.replace(new RegExp(timeSent + "$"), "").trim();
+
+        // Format the message with role and timestamp
+        var formattedMessage = `<b>${role.charAt(0).toUpperCase() + role.slice(1)}</b> - ${messageWithoutTimestamp}`;
+
+        // Add the formatted message to the conversation
+        formattedConversation += formattedMessage + "</br>";
+    }
+
+    return formattedConversation;
 }

@@ -1,6 +1,6 @@
 import { addUserPrompt } from "./input.js";
 import { fetchVideoTranscriptLink, isVideoTranscriptLink, fetchStreamVideoLink } from "./data.js";
-import { handleTranscriptFromVideoLink, transcribeVideo, shareConversation } from "./processor.js";
+import { handleTranscriptFromVideoLink, transcribeVideo, exportConversation } from "./processor.js";
 import { resetConversation } from "./gpt.js";
 
 // to enable it in all content scripts 
@@ -57,9 +57,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     resetBtn.addEventListener('click', () => {
         resetConversation();
-    })
+    });
 
-    shareBtn.addEventListener('click', () => {
-        shareConversation();
-    })
+    exportBtn.addEventListener('click', () => {
+        exportConversation();
+    });
 });
