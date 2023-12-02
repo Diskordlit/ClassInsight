@@ -6,3 +6,4 @@
 2. https://rollbar.com/blog/chatgpt-api-with-javascript/
 3. https://www.linkedin.com/pulse/how-use-processenv-access-environment-variables-nodejs-adnan-muzaffar/
 4. https://github.com/Kagami/ffmpeg.js
+5. https://phppot.com/demo/how-to-export-html-to-word-document-with-javascript/
