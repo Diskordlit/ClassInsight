@@ -51,7 +51,7 @@ body {
     margin: 0;
     font-size: 25px;
     color: var(--white);
-    margin-left: 3px;
+    margin-left: 10px;
     font-family: var(--font-family);
 }
 
@@ -72,6 +72,8 @@ body {
     transform: rotate(90deg);
 }
 
+.btnExport:hover,
+.btnInfo:hover {
 .btnExport:hover,
 .btnInfo:hover {
     color: var(--bright-maroon);
@@ -148,7 +150,7 @@ input[type="text"]:focus {
 }
 
 .chatbox-container {
-    height: auto;
+    height: 545px;
     width: 100%;
     padding: 10px;
     background: var(--chatbox-border-color);
@@ -192,10 +194,12 @@ input[type="text"]:focus {
     flex-wrap: wrap;
     margin-right: 40px;
     margin-bottom: 10px;
-    background: var(--turquoise);
+    background: var(--bright-maroon);
+    color: white;
     padding: 10px 10px;
     border-radius: 7px;
     box-shadow: 1px 2px 3px black;
+    text-shadow: 1px 1px 1px black;
     flex-direction: column;
 }
 
@@ -204,12 +208,20 @@ input[type="text"]:focus {
     flex-wrap: wrap;
     margin-left: 40px;
     margin-bottom: 10px;
-    background: var(--dark-turquoise);
+    background: white;
     padding: 10px 10px;
     border-radius: 7px;
     box-shadow: 1px 2px 3px black;
     text-align: right;
     flex-direction: column;
+}
+
+.system-timestamp {
+    color: white;
+}
+
+.user-timestamp {
+    color: black;
 }
 
 .system-timestamp,
@@ -219,8 +231,6 @@ input[type="text"]:focus {
     text-align: right;
     justify-content: right;
     font-size: 12px;
-    color: white;
-    text-shadow: 1px 2px 2px black;
     margin-top: 7px;
 }
 
@@ -237,7 +247,7 @@ input[type="text"]:focus {
     resize: none;
     width: calc(100% - 10px);
     margin-right: 3px;
-    padding: 3px 5px;
+    padding: 10px 10px;
     border: none;
     height: 60px;
     font-size: 15px;
@@ -257,13 +267,13 @@ input[type="text"]:focus {
     border: none;
     font-size: 20px;
     text-shadow: 1px 2px 3px black;
-    color: var(--dark-turquoise);
+    color: white;
     cursor: pointer;
     transition: 0.3s ease-in-out;
 }
 
 .btn-send:hover {
-    color: var(--turquoise);
+    color: var(--bright-maroon);
 }
 
 /* Loading */
@@ -332,7 +342,7 @@ input[type="text"]:focus {
     font-size: 16px;
     text-transform: uppercase;
     font-weight: 600;
-    color: var(--bright-maroon);
+    color: white;
     text-shadow: 1px 2px 3px black;
 }
 
@@ -347,7 +357,7 @@ input[type="text"]:focus {
     justify-content: center;
     align-items: center;
     font-size: 70px;
-    color: var(--turquoise);
+    color: white;
     filter: drop-shadow(1px 2px 3px black);
 }
 
@@ -420,9 +430,8 @@ input[type="text"]:focus {
 }
 
 .openIcon {
-    height: 40px;
-    width: 40px;
-    filter: drop-shadow(1px 2px 2px black);
+    height: 30px;
+    width: 30px;
 }
 
 .closeModalButton {
@@ -439,6 +448,16 @@ input[type="text"]:focus {
     font-size: 30px;
     filter: drop-shadow(1px 2px 2px black);
     cursor: pointer;
+}
+
+.openModalButton:hover,
+.closeModalButton:hover {
+    background-color: rgb(225, 223, 221);
+}
+
+.openModalButton:active,
+.closeModalButton:active {
+    background-color: rgb(148, 147, 145);
 }
 
 .closeIcon {
