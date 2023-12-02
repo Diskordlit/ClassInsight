@@ -1,11 +1,7 @@
 # ClassInsight [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U7U86VME5)
-## Chrome Extension Installation
-To add the extension to Chrome or any Chromium browser (such as Microsoft Edge) follow the steps below:
-1. Click on the code dropdown and download it as a .zip file.
-2. Ensure that [Node.js](https://nodejs.org/en/download/) has been installed if not already.
-3. Under the project directory, run `npm install` in the terminal to install all the required dependencies.
-4. Once done, run `npm run build` which would create a `dist` folder.
-5. Follow the instructions listed in [this article](https://webkul.com/blog/how-to-install-the-unpacked-extension-in-chrome/), using the `dist` folder as the extension directory.
+## Extension Installation
+1. Download and unzip the latest [release](https://github.com/Diskordlit/ClassInsight/releases) of the Extension.
+2. Refer to this [article](https://webkul.com/blog/how-to-install-the-unpacked-extension-in-chrome/) add the extension to Chrome or any Chromium browser (such as Microsoft Edge).
 
 ![ClassInsight Icon](https://github.com/Diskordlit/ClassInsight/blob/main/images/AI%20Classroom%20Hackathon.png)
 
