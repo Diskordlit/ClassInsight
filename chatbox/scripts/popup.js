@@ -62,4 +62,8 @@ document.addEventListener('DOMContentLoaded', function () {
     exportBtn.addEventListener('click', () => {
         exportConversation();
     });
+
+    infoBtn.addEventListener('click', () => {
+        window.open('https://github.com/Diskordlit/ClassInsight', '_blank');
+    })
 });

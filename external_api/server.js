@@ -10,6 +10,8 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.raw({ type: 'audio/wav', limit: '50mb' }));
 
+app.get('/', (req, res) => res.json(({message: 'Hello ClassInsight'})));
+
 app.post('/transcribe', (req, res) => {
   try {
     const audioBuffer = req.body;
