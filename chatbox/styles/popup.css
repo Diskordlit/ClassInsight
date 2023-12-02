@@ -9,6 +9,11 @@
     --maroon: #aa1640;
     --dark-maroon: #891234;
     --darker-maroon: #5d0c23;
+    --dark-purple: #4e00c3;
+    --darker-purple: #2f0076;
+    --blue: #3ecdf9;
+    --pink: #f200ea;
+    --yellow: #f9b600;
     --font-family: sans-serif;
 }
 
@@ -27,7 +32,7 @@ body {
     width: 100%;
     padding: 12px;
     /**max-height: 606px;**/
-    background: var(--main-background);
+    background: var(--dark-purple);
     border-radius: 7px;
 }
 
@@ -53,6 +58,20 @@ body {
     color: var(--white);
     margin-left: 10px;
     font-family: var(--font-family);
+
+    overflow: hidden;
+    background: linear-gradient(to right, var(--bright-maroon), var(--bright-maroon) 50%, white 50%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    background-position: 100%;
+    transition: background-position 275ms ease;
+    text-decoration: none;
+}
+
+.title h1:hover {
+    background-position: 0 100%;
 }
 
 .btnReset,
@@ -85,7 +104,9 @@ body {
 }
 
 .url-container {
+    display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 /* .url-container .url-input {
@@ -114,7 +135,7 @@ input[type="text"]:focus {
     font-size: 16px;
     text-align: center;
     font-weight: 600;
-    color: var(--turquoise);
+    color: white;
     text-shadow: 1px 2px 3px black;
 }
 
@@ -151,7 +172,7 @@ input[type="text"]:focus {
     height: 545px;
     width: 100%;
     padding: 10px;
-    background: var(--chatbox-border-color);
+    background: linear-gradient(var(--yellow), var(--pink));
     border-radius: 7px;
     display: none;
     flex-direction: column;
@@ -160,7 +181,7 @@ input[type="text"]:focus {
 .conversation-container {
     height: 100%;
     margin-bottom: 12px;
-    background: var(--main-background);
+    background: var(--darker-purple);
     border-radius: 3px;
     box-shadow: 2px 3px 2px black;
     overflow-y: auto;
@@ -192,12 +213,11 @@ input[type="text"]:focus {
     flex-wrap: wrap;
     margin-right: 40px;
     margin-bottom: 10px;
-    background: var(--bright-maroon);
-    color: white;
+    background: var(--blue);
+    color: black;
     padding: 10px 10px;
     border-radius: 7px;
     box-shadow: 1px 2px 3px black;
-    text-shadow: 1px 1px 1px black;
     flex-direction: column;
 }
 
@@ -215,7 +235,7 @@ input[type="text"]:focus {
 }
 
 .system-timestamp {
-    color: white;
+    color: black;
 }
 
 .user-timestamp {
@@ -271,12 +291,13 @@ input[type="text"]:focus {
 }
 
 .btn-send:hover {
-    color: var(--bright-maroon);
+    color: var(--blue);
 }
 
 /* Loading */
 .loading {
-    display: none;
+    display: flex;
+    justify-content: center;
     flex-direction: column;
 }
 
@@ -346,7 +367,8 @@ input[type="text"]:focus {
 
 /* Success */
 .success {
-    display: none;
+    display: flex;
+    justify-content: center;
     flex-direction: column;
 }
 
