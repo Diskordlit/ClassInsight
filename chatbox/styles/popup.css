@@ -72,7 +72,8 @@ body {
     transform: rotate(90deg);
 }
 
-.btnExport:hover, .btnInfo:hover {
+.btnExport:hover,
+.btnInfo:hover {
     color: var(--bright-maroon);
 }
 
@@ -83,8 +84,7 @@ body {
     justify-content: center;
 }
 
- .url-container {
-    display: none;
+.url-container {
     flex-direction: column;
 }
 
