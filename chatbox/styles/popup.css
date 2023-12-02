@@ -171,7 +171,6 @@ input[type="text"]:focus {
 
 .chatbox-container {
     height: 545px;
-    width: 100%;
     padding: 10px;
     background: linear-gradient(var(--yellow), var(--pink));
     border-radius: 7px;
@@ -297,7 +296,7 @@ input[type="text"]:focus {
 
 /* Loading */
 .loading {
-    display: flex;
+    display: none;
     justify-content: center;
     flex-direction: column;
 }
@@ -357,7 +356,8 @@ input[type="text"]:focus {
 }
 
 .loading-message,
-.success-message {
+.success-message,
+.error-message {
     text-align: center;
     font-size: 16px;
     text-transform: uppercase;
@@ -368,12 +368,28 @@ input[type="text"]:focus {
 
 /* Success */
 .success {
-    display: flex;
+    display: none;
     justify-content: center;
     flex-direction: column;
 }
 
 .success-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 70px;
+    color: white;
+    filter: drop-shadow(1px 2px 3px black);
+}
+
+/* Error */
+.error {
+    display: none;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.error-icon {
     display: flex;
     justify-content: center;
     align-items: center;

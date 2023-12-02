@@ -56,20 +56,30 @@ export const getVideoDuration = async (videoBlob) => {
 export const setLoadingMessage = (status, message) => {
     const loading = document.getElementById("loading");
     const success = document.getElementById("success");
+    const error = document.getElementById("error");
     const loadingMessage = document.getElementById("loading-message");
     const successMessage = document.getElementById("success-message");
+    const errorMessage = document.getElementById("error-message");
 
     if (status == "pending") {
         success.style.display = "none";
         loadingMessage.textContent = message;
         loading.style.display = "flex";
-    } else {
+    } else if (status == "success") {
         loading.style.display = "none";
         success.style.display = "flex";
         successMessage.textContent = message;
 
         setTimeout(() => {
             success.style.display = "none";
+        }, 3000);
+    } else {
+        loading.style.display = "none";
+        error.style.display = "flex";
+        errorMessage.textContent = message;
+
+        setTimeout(() => {
+            error.style.display = "none";
         }, 3000);
     }
 }
@@ -124,4 +134,12 @@ export const formatConversation = () => {
     }
 
     return formattedConversation;
+}
+
+export const showNeedTranscribeWithDelay = () => {
+    const needTranscribe = document.querySelector(".need-transcribe");
+
+    setTimeout(() => {
+        needTranscribe.style.display = "flex";
+    }, 3000);
 }

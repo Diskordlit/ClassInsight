@@ -1,4 +1,4 @@
-import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, formatConversation, isCloseNeedTranscribeSection } from "./utils";
+import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, formatConversation, isCloseNeedTranscribeSection, showNeedTranscribeWithDelay } from "./utils";
 import { sendTranscript } from "./gpt";
 import { transcribeAudio } from "./speech";
 import { getTranscript, saveTranscript } from "./database";
@@ -42,22 +42,32 @@ export const transcribeVideo = () => {
                             const audioFile = await convertToAudio(videoBlob);
                             setLoadingMessage("pending", "Transcribing the audio file...");
                             const newTranscript = await transcribeAudio(audioFile, duration);
-                            await saveTranscript(videoLink, newTranscript);
-                            setLoadingMessage("success", "Starting Conversation...");
-                            sendTranscript(newTranscript); //remove loading and everything show Conversation.
-                            setLoadingMessage("success", "Starting Conversation...");
-                            setTimeout(() => {
-                                startConversation("success");
-                            }, 3000);
+                            if (newTranscript) {
+                                await saveTranscript(videoLink, newTranscript);
+                                setLoadingMessage("success", "Starting Conversation...");
+                                sendTranscript(newTranscript); //remove loading and everything show Conversation.
+                                setLoadingMessage("success", "Starting Conversation...");
+                                setTimeout(() => {
+                                    startConversation("success");
+                                }, 3000);
+                            } else {
+                                setLoadingMessage("error", "Something unexpected went wrong, please try again later.");
+                                showNeedTranscribeWithDelay();
+                            }
                         } else {
-                            alert("The video's duration is longer than 30 minutes, not transcribable!");
+                            setLoadingMessage("error", "The video's duration is longer than 30 minutes, not transcribable!");
+                            showNeedTranscribeWithDelay();
                         }
                     } catch (error) {
                         console.error('Error:', error.message);
+                        setLoadingMessage("error", "The video is unfetchable, try other videos.");
+                        showNeedTranscribeWithDelay();
                     }
                 })
                 .catch((error) => {
                     console.error('Error:', error);
+                    setLoadingMessage("error", "The video is unfetchable, try other videos.");
+                    showNeedTranscribeWithDelay();
                 });
         } else {
             sendTranscript(transcript.transcript); //remove loading and everything show Conversation.
