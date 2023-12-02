@@ -4,3 +4,4 @@ external_api/node_modules
 dist
 chatbox/scripts/config.js
 settings.json
+external_api/config.js

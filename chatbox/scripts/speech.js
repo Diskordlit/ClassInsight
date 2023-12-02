@@ -1,6 +1,6 @@
 export const transcribeAudio = async (audioFile, audioDuration) => {
   try {
-    const response = await fetch(`http://localhost:3000/transcribe?audioDuration=${audioDuration}`, {
+    const response = await fetch(`https://classinsightapi.azurewebsites.net/transcribe?audioDuration=${audioDuration}`, {
       method: 'POST',
       body: audioFile,
       headers: {

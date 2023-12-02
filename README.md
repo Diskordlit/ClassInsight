@@ -47,3 +47,4 @@ As students ourselves, we identified struggles that we were faced with in our un
 3. https://www.linkedin.com/pulse/how-use-processenv-access-environment-variables-nodejs-adnan-muzaffar/
 4. https://github.com/Kagami/ffmpeg.js
 5. https://phppot.com/demo/how-to-export-html-to-word-document-with-javascript/
+6. https://learn.microsoft.com/en-in/azure/app-service/quickstart-nodejs?tabs=windows&pivots=development-environment-vscode

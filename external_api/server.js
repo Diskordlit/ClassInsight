@@ -1,11 +1,12 @@
-import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
-import cors from 'cors';
-import express from 'express';
-import bodyParser from 'body-parser';
-import config from '../chatbox/scripts/config.js';
+const sdk = import('microsoft-cognitiveservices-speech-sdk');
+const cors = require('cors');
+const express = require('express');
+const bodyParser = require('body-parser');
+const config = require('./config.js');
+
 
 const app = express();
-const port = 3000;
+const port = process.env.port || process.env.PORT || 6969;
 
 app.use(cors());
 app.use(bodyParser.raw({ type: 'audio/wav', limit: '50mb' }));
