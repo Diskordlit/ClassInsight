@@ -62,10 +62,10 @@ export const setLoadingMessage = (status, message) => {
     if (status == "pending") {
         success.style.display = "none";
         loadingMessage.textContent = message;
-        loading.style.display = "block";
+        loading.style.display = "flex";
     } else {
         loading.style.display = "none";
-        success.style.display = "block";
+        success.style.display = "flex";
         successMessage.textContent = message;
 
         setTimeout(() => {
@@ -93,7 +93,7 @@ export const isCloseNeedTranscribeSection = (isClose) => {
     const noNeedTranscribe = document.querySelector(".no-transcribe");
 
     if (!isClose) {
-        needTranscribeURL.style.display = "block"; // Change back to "block" later
+        needTranscribeURL.style.display = "flex";
         noNeedTranscribe.style.display = "none";
     } else {
         needTranscribeURL.style.display = "none";

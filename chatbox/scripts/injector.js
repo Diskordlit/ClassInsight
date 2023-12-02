@@ -55,7 +55,7 @@ var closeModalButton = document.createElement("button");
 closeModalButton.classList.add("closeModalButton");
 closeModalButton.addEventListener("click", function () {
     modalContainer.style.display = "none";
-    openModalButton.style.display = "block";
+    openModalButton.style.display = "flex";
 });
 
 closeModalButton.appendChild(closeIcon);
@@ -74,6 +74,6 @@ setTimeout(() => {
 
     // Add Iframe & Close Button to Modal
     modalContainer.appendChild(extensionContainer);
-    openModalButton.style.display = "block";
+    openModalButton.style.display = "flex";
 }, 5000);
 

@@ -9,7 +9,7 @@ const startConversation = (status) => {
     const needTranscribe = document.querySelector(".need-transcribe");
 
     if (status === "success") {
-        noNeedTranscribe.style.display = "block";
+        noNeedTranscribe.style.display = "flex";
         needTranscribe.style.display = "none";
         addSystemPrompt("Hello there! What would you like to know about the video?");
     } else {
@@ -25,7 +25,7 @@ export const transcribeVideo = () => {
 
     chrome.storage.session.get("videoLink").then(async ({ videoLink }) => {
         needTranscribe.style.display = "none";
-        loading.style.display = "block";
+        loading.style.display = "flex";
         setLoadingMessage("pending", "No Transcripts found, checking if transcript exists..."); //Check if Transcript exists.
         let transcript = await getTranscript(videoLink);
 
