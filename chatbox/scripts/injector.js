@@ -37,7 +37,7 @@ openModalButton.addEventListener("click", function () {
 // Open Modal Logo
 var openLogo = document.createElement("img");
 openLogo.classList.add("openIcon");
-openLogo.src = chrome.runtime.getURL("chatbox/styles/logo.png");
+openLogo.src = chrome.runtime.getURL("chatbox/styles/CInsight-nobackground-logo-500.png");
 openLogo.alt = "open";
 
 // Modal Container
