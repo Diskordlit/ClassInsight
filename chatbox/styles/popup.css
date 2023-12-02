@@ -422,7 +422,6 @@ input[type="text"]:focus {
     border-radius: 50%;
     border: 0;
     padding: 0;
-    display: none;
     justify-content: center;
     align-items: center;
 }

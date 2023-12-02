@@ -29,18 +29,19 @@ module.exports = {
                     presets: ['@babel/preset-env']
                 }
             }
-        }],
+        }]
     },
     plugins: [
         new HtmlWebpackPlugin({
             template: './chatbox/views/popup.html',
-            filename: 'chatbox/views/popup.html'
+            filename: 'chatbox/views/popup.html',
+            excludeChunks: ['injector'],
         }),
         new CopyPlugin({
             patterns: [
-                {from: "public" },
-                {from: "images", to: "images"},
-                {from: "chatbox/styles", to: "chatbox/styles"}
+                { from: "public" },
+                { from: "images", to: "images" },
+                { from: "chatbox/styles", to: "chatbox/styles" }
             ]
         })
     ],
