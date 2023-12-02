@@ -17,13 +17,12 @@ body {
     width: 100%;
     box-sizing: border-box;
     display: flex;
-    align-items: center;
-    justify-content: center;
     margin: 0;
 }
 
 .centering-container {
     display: flex;
+    justify-content: flex-start;
     align-items: center;
     width: 320px;
     padding: 20px 16px;
@@ -144,7 +143,7 @@ input[type="text"]:focus {
 }
 
 .chatbox-container {
-    height: 500px;
+    height: 75vh;
     padding: 10px;
     background: var(--chatbox-border-color);
     border-radius: 7px;
@@ -432,10 +431,14 @@ input[type="text"]:focus {
 
 .modalContainer {
     position: fixed;
-    bottom: 0px; /* Adjust the distance from the bottom as needed */
-    left: 0px;   /* Adjust the distance from the left as needed */
-    width: 100%;   /* Adjust the width as needed */
-    height: 100%;  /* Adjust the height as needed */
+    bottom: 0px;
+    /* Adjust the distance from the bottom as needed */
+    left: 0px;
+    /* Adjust the distance from the left as needed */
+    width: 100%;
+    /* Adjust the width as needed */
+    height: 100%;
+    /* Adjust the height as needed */
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
