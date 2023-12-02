@@ -74,8 +74,6 @@ body {
 
 .btnExport:hover,
 .btnInfo:hover {
-.btnExport:hover,
-.btnInfo:hover {
     color: var(--bright-maroon);
 }
 
