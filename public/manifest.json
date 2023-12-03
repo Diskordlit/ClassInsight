@@ -1,12 +1,11 @@
 {
   "name": "ClassInsight",
   "description": "GPT your lecture recordings",
-  "version": "0.1",
+  "version": "1.0.1",
   "manifest_version": 3,
   "permissions": [
     "tabs",
     "storage",
-    "activeTab",
     "scripting"
   ],
   "icons": {
@@ -16,7 +15,6 @@
     "128": "/images/logo128.png"
   },
   "host_permissions": [
-    "https://www.doesthedogdie.com/",
     "https://classinsight-cosmodbb.documents.azure.com/",
     "https://classinsight-cosmodbb-westus.documents.azure.com/",
     "https://cloudmails-my.sharepoint.com/*",
