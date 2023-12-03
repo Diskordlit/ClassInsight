@@ -1,4 +1,4 @@
-import { getCurrentTime } from "./utils";
+import { getCurrentTime, addConversationLoader } from "./utils";
 import { askGPT } from "./gpt";
 
 const conversationContainer = document.querySelector(".conversation-container");
@@ -6,26 +6,47 @@ const conversationContainer = document.querySelector(".conversation-container");
 // Send user message to chatbox (after entered)
 export const addUserPrompt = async (inputField) => {
     let userInput = document.querySelector(inputField);
+    let tempUserInput = "";
     let time = getCurrentTime();
 
-    if (userInput.value.trim() !== "") {
+    tempUserInput = userInput.value;
+    // Optionally, you can clear the input field after sending the response
+    userInput.value = "";
+
+    if (tempUserInput.trim() !== "") {
         const userResponse = document.createElement("div");
         userResponse.className = "user-response";
-        userResponse.innerHTML = userInput.value +
+        userResponse.innerHTML = tempUserInput +
             '<span class="user-timestamp">' + time + '</span>';
-        userResponse.setAttribute("data-role", "system");
+        userResponse.setAttribute("data-role", "user");
         userResponse.setAttribute("data-timestamp", time);
         conversationContainer.appendChild(userResponse);
 
-        // Loading Function to be Added
+        setTimeout( async () => {
+            addConversationLoader();
 
-        addSystemPrompt(await askGPT(userInput.value));
+            var gptResponse = await askGPT(tempUserInput);
+            var loader = document.getElementById("system-response-loader");
 
-        // Optionally, you can clear the input field after sending the response
-        userInput.value = "";
+            if (gptResponse) {
+                setTimeout(() => {
+                    if (loader) {
+                        conversationContainer.removeChild(loader);
+                    }
+                    addSystemPrompt(gptResponse);
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    if (loader) {
+                        conversationContainer.removeChild(loader);
+                    }
+                    addSystemPrompt("Something went wrong, please try again later.");
+                }, 1500);
+            }
 
-        // Scroll to the bottom to keep the latest message visible
-        conversationContainer.scrollTop = conversationContainer.scrollHeight;
+            // Scroll to the bottom to keep the latest message visible
+            conversationContainer.scrollTop = conversationContainer.scrollHeight;
+        }, 1000);
     }
 }
 

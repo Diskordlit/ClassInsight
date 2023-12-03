@@ -127,10 +127,10 @@ export const formatConversation = () => {
         var messageWithoutTimestamp = message.replace(new RegExp(timeSent + "$"), "").trim();
 
         // Format the message with role and timestamp
-        var formattedMessage = `<b>${role.charAt(0).toUpperCase() + role.slice(1)}</b> - ${messageWithoutTimestamp}`;
+        var formattedMessage = `<p style="line-height: 1.25;"><b>${role.charAt(0).toUpperCase() + role.slice(1)}</b> - ${messageWithoutTimestamp}</p>`;
 
         // Add the formatted message to the conversation
-        formattedConversation += formattedMessage + "</br>";
+        formattedConversation += formattedMessage;
     }
 
     return formattedConversation;
@@ -142,4 +142,26 @@ export const showNeedTranscribeWithDelay = () => {
     setTimeout(() => {
         needTranscribe.style.display = "flex";
     }, 3000);
+}
+
+export const addConversationLoader = () => {
+    var conversationContainer = document.getElementById("conversation-container");
+
+    // Create a loader span
+    var loader = document.createElement("span");
+    loader.classList.add("loader");
+
+    // Create the system response div
+    const systemResponse = document.createElement("div");
+    systemResponse.className = "system-response";
+    systemResponse.setAttribute("id", "system-response-loader");
+
+    // Append the loader to the system response
+    systemResponse.appendChild(loader);
+
+    // Append the system response to the conversation container
+    conversationContainer.appendChild(systemResponse);
+
+    // Scroll to the bottom to keep the latest message visible
+    conversationContainer.scrollTop = conversationContainer.scrollHeight;
 }

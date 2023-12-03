@@ -54,7 +54,7 @@ async function askGPT(prompt) {
     }
   } catch (err) {
     console.error("The sample encountered an error:", err);
-    return "The sample encountered an error: " + err;
+    return null;
   }
 }
 
