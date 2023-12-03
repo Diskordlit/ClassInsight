@@ -127,7 +127,7 @@ export const formatConversation = () => {
         var messageWithoutTimestamp = message.replace(new RegExp(timeSent + "$"), "").trim();
 
         // Format the message with role and timestamp
-        var formattedMessage = `<p style="line-height: 1.25;"><b>${role.charAt(0).toUpperCase() + role.slice(1)}</b> - ${messageWithoutTimestamp}</p>`;
+        var formattedMessage = `<p style="line-height: 1.25; text-align:"><b>${role.charAt(0).toUpperCase() + role.slice(1)}</b> - ${messageWithoutTimestamp}</p>`;
 
         // Add the formatted message to the conversation
         formattedConversation += formattedMessage;
