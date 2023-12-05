@@ -95,7 +95,7 @@ export const turnOffLoadingMessage = () => {
 }
 
 export const getDbIdFromUrl = (url) => {
-    return btoa(url).replace(/\//g, '*').replace(/\=/g, '`').slice(30, 80);
+    return btoa(url).replace(/\//g, '*').replace(/\=/g, '`').slice(30, 100);
 }
 
 export const isCloseNeedTranscribeSection = (isClose) => {

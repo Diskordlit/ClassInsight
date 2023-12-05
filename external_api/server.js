@@ -31,11 +31,13 @@ async function startServer() {
 
       // Create the conversation transcriber
       const transcriber = new ConversationTranscriber(speechConfig, audioConfig);
+      res.setHeader('Content-Type', 'text/plain');
 
       // Define event handlers
-      const transcriptResults = []; // to accumulate results
+      // const transcriptResults = []; // to accumulate results
       transcriber.transcribed = (s, e) => {
         let sentenceTimestamps = {};
+        let transcriptResult = {};
 
         // Process sentence-level timestamps
         if (e.result.privJson) {
@@ -54,13 +56,14 @@ async function startServer() {
           };
         }
 
-        transcriptResults.push({
+        transcriptResult = {
           text: e.result.text,
           speakerId: e.result.speakerId,
           timestamp: sentenceTimestamps.formattedStartTime
-        });
+        };
 
-        console.log(transcriptResults);
+        res.write(JSON.stringify(transcriptResult));
+        console.log(transcriptResult);
       };
 
       // Start conversation transcription
@@ -78,14 +81,14 @@ async function startServer() {
         );
       });
 
-      // Wait for the specified duration
+      // // Wait for the specified duration
       await new Promise(resolve => setTimeout(resolve, audioDuration * 1000));
 
-      // Stop transcription
+      // // Stop transcription
       transcriber.stopTranscribingAsync();
 
-      // Send accumulated results
-      res.json(transcriptResults);
+      // // Send accumulated results
+      // res.json(transcriptResults);
 
     } catch (error) {
       console.error(`Unexpected error: ${error.message}`);
