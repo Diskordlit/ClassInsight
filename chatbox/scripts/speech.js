@@ -1,32 +1,64 @@
-export const Decodeuint8arr = (uint8array) => {
-  try {
-    return JSON.parse(new TextDecoder("utf-8").decode(uint8array));
-  } catch (e) {
-    return new TextDecoder("utf-8").decode(uint8array);
-  }
-}
-
 export const transcribeAudio = async (audioFile, audioDuration) => {
   try {
-    const response = await fetch(`https://classinsightapi.azurewebsites.net/transcribe?audioDuration=${audioDuration}`, {
+    const audioUploadresponse = await fetch(`http://localhost:6969/transcribe?audioDuration=${audioDuration}`, {
       method: 'POST',
       body: audioFile,
       headers: {
         'Content-Type': 'audio/wav', // Set the appropriate content type
       },
     });
-    const reader = response.body.getReader();
-    const transcriptResults = []; // to accumulate results
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done || Decodeuint8arr(value) === "end message") break;
-      console.log("Received Transcript: ", Decodeuint8arr(value));
-      transcriptResults.push(Decodeuint8arr(value));
+
+    if (audioUploadresponse.ok) {
+      console.log("Audio File Received.");
+      return "Audio File Received";
+    } else {
+      console.error(`Error: ${audioUploadresponse.status} - ${audioUploadresponse.statusText}`);
+      return null; // Or handle the error accordingly
     }
-    return transcriptResults;
 
   } catch (error) {
     console.error(`Unexpected error: ${error.message}`);
     return null; // Or handle the error accordingly
   }
 };
+
+export const getTranscriptResults = async () => {
+  try {
+    const getTranscriptResponse = await fetch('http://localhost:6969/getTranscriptResults', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json', // Set the appropriate content type
+        // Add other headers if needed
+      },
+    });
+
+    if (getTranscriptResponse.ok) {
+
+      const getTranscriptResponseData = await getTranscriptResponse.json();
+      const { status, transcriptResults } = getTranscriptResponseData;
+
+      console.log(getTranscriptResponseData);
+
+      if (status === 'pending') {
+        // If status is pending, wait for 3 seconds and then call the function again
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        return getTranscriptResults();
+      } else if (status === 'completed') {
+        // If status is completed, return the transcript results
+        return transcriptResults;
+      } else {
+        // Handle other statuses if needed
+        console.error(`Unexpected status: ${status}`);
+        return null;
+      }
+
+    } else {
+      console.error(`Error: ${getTranscriptResponse.status} - ${getTranscriptResponse.statusText}`);
+      return null; // Or handle the error accordingly
+    }
+
+  } catch (error) {
+    console.error(`Unexpected error: ${error.message}`);
+    return null; // Or handle the error accordingly
+  }
+}

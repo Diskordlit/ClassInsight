@@ -1,20 +1,25 @@
 async function startServer() {
   const express = require('express');
   const bodyParser = require('body-parser');
-  // const config = require('./config.js');
+  const config = require('./config.js');
   const { SpeechConfig, AudioConfig, AudioInputStream, ConversationTranscriber } = await import('microsoft-cognitiveservices-speech-sdk');
   const cors = require('cors');
 
   const app = express();
   const port = process.env.PORT || 6969;
 
+  const transcriptResults = [];
+  var status = "pending";
+
   app.use(cors());
-  app.use(bodyParser.raw({ type: 'audio/wav', limit: '100mb' }));
+  app.use(bodyParser.raw({ type: 'audio/wav', limit: '50mb' }));
 
   app.get('/', (req, res) => res.json(({ message: 'Hello ClassInsight' })));
 
   app.post('/transcribe', async (req, res) => {
     try {
+      status = "pending";
+
       const audioBuffer = req.body;
       const audioDuration = req.query.audioDuration;
 
@@ -25,19 +30,19 @@ async function startServer() {
       pushStream.write(audioBuffer);
       pushStream.close();
 
+      // Acknowledge receipt of the audio file
+      res.status(200).json({ message: 'Audio file received. Transcription process started.' });
+
       // Set up speech config and audio config
-      const speechConfig = SpeechConfig.fromSubscription(process.env.AZURE_SPEECH_KEY, process.env.AZURE_SPEECH_REGION);
+      const speechConfig = SpeechConfig.fromSubscription(config.AZURE_SPEECH_KEY, config.AZURE_SPEECH_REGION);
       const audioConfig = AudioConfig.fromStreamInput(pushStream);
 
       // Create the conversation transcriber
       const transcriber = new ConversationTranscriber(speechConfig, audioConfig);
-      res.setHeader('Content-Type', 'text/plain');
 
       // Define event handlers
-      // const transcriptResults = []; // to accumulate results
       transcriber.transcribed = (s, e) => {
         let sentenceTimestamps = {};
-        let transcriptResult = {};
 
         // Process sentence-level timestamps
         if (e.result.privJson) {
@@ -56,14 +61,13 @@ async function startServer() {
           };
         }
 
-        transcriptResult = {
+        transcriptResults.push({
           text: e.result.text,
           speakerId: e.result.speakerId,
           timestamp: sentenceTimestamps.formattedStartTime
-        };
+        });
 
-        res.write(JSON.stringify(transcriptResult));
-        console.log(transcriptResult);
+        console.log(transcriptResults);
       };
 
       // Start conversation transcription
@@ -81,14 +85,24 @@ async function startServer() {
         );
       });
 
-      // // Wait for the specified duration
-      setTimeout(() => {
-        console.log("Stopping Transcribing...");
-        // // Stop transcription
-        transcriber.stopTranscribingAsync();
-        res.end("end message")
-      }, (audioDuration * 1000));
+      // Wait for the specified duration
+      await new Promise(resolve => setTimeout(resolve, audioDuration * 1000));
 
+      // Stop transcription
+      transcriber.stopTranscribingAsync();
+
+      status = "completed";
+
+    } catch (error) {
+      console.error(`Unexpected error: ${error.message}`);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  app.get('/getTranscriptResults', (req, res) => {
+    try {
+      // Respond with the stored transcript results
+      res.status(200).json({status, transcriptResults});
     } catch (error) {
       console.error(`Unexpected error: ${error.message}`);
       res.status(500).json({ error: 'Internal server error' });

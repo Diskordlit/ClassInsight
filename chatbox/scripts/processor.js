@@ -1,6 +1,6 @@
 import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, formatConversation, isCloseNeedTranscribeSection, showNeedTranscribeWithDelay } from "./utils";
 import { sendTranscript } from "./gpt";
-import { transcribeAudio } from "./speech";
+import { transcribeAudio, getTranscriptResults } from "./speech";
 import { getTranscript, saveTranscript } from "./database";
 import { addSystemPrompt } from "./input.js";
 
@@ -40,18 +40,28 @@ export const transcribeVideo = () => {
                         if (duration <= 1800) {
                             setLoadingMessage("pending", "Converting video to audio format...");
                             const audioFile = await convertToAudio(videoBlob);
-                            setLoadingMessage("pending", "Transcribing the audio file...");
-                            const newTranscript = await transcribeAudio(audioFile, duration);
-                            if (newTranscript) {
-                                await saveTranscript(videoLink, newTranscript);
-                                setLoadingMessage("success", "Starting Conversation...");
-                                sendTranscript(newTranscript); //remove loading and everything show Conversation.
-                                setLoadingMessage("success", "Starting Conversation...");
-                                setTimeout(() => {
-                                    startConversation("success");
-                                }, 3000);
+                            setLoadingMessage("pending", "Uploading the audio file...");
+                            const uploadAudioFile = await transcribeAudio(audioFile, duration);
+                            if (uploadAudioFile == "Audio File Received") {
+                                setLoadingMessage("pending", "Transcribing the audio file...");
+                                setTimeout(async () => {
+                                    const newTranscript = await getTranscriptResults();
+
+                                    if (newTranscript) {
+                                        await saveTranscript(videoLink, newTranscript);
+                                        setLoadingMessage("success", "Successfully Transcribed, Sending context to ClassInsight...");
+                                        sendTranscript(newTranscript); //remove loading and everything show Conversation.
+                                        setLoadingMessage("success", "Starting Conversation...");
+                                        setTimeout(() => {
+                                            startConversation("success");
+                                        }, 3000);
+                                    } else {
+                                        setLoadingMessage("error", "The transcription failed, please try again later.");
+                                        showNeedTranscribeWithDelay();
+                                    }
+                                }, duration * 1000);
                             } else {
-                                setLoadingMessage("error", "Something unexpected went wrong, please try again later.");
+                                setLoadingMessage("error", "The audio file upload failed, please try again later.");
                                 showNeedTranscribeWithDelay();
                             }
                         } else {
