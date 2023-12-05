@@ -13,7 +13,7 @@ async function startServer() {
 
   app.get('/', (req, res) => res.json(({ message: 'Hello ClassInsight' })));
 
-  app.post('/transcribe', (req, res) => {
+  app.post('/transcribe', async (req, res) => {
     try {
       const audioBuffer = req.body;
       const audioDuration = req.query.audioDuration;
@@ -27,7 +27,6 @@ async function startServer() {
 
       // Set up speech config and audio config
       const speechConfig = SpeechConfig.fromSubscription(config.AZURE_SPEECH_KEY, config.AZURE_SPEECH_REGION);
-      //speechConfig.requestWordLevelTimestamps();
       const audioConfig = AudioConfig.fromStreamInput(pushStream);
 
       // Create the conversation transcriber
@@ -64,26 +63,30 @@ async function startServer() {
         console.log(transcriptResults);
       };
 
-      // Begin conversation transcription
-      transcriber.startTranscribingAsync(
-        () => {
-          // Transcription started successfully
-          console.log("Transcription started");
-        },
-        (err) => {
-          console.trace(`err - starting transcription: ${err}`);
-          res.status(500).json({ error: 'Transcription error' });
-        }
-      );
+      // Start conversation transcription
+      await new Promise((resolve, reject) => {
+        transcriber.startTranscribingAsync(
+          () => {
+            // Transcription started successfully
+            console.log("Transcription started");
+            resolve();
+          },
+          (err) => {
+            console.trace(`err - starting transcription: ${err}`);
+            reject(err);
+          }
+        );
+      });
 
-      // Handle completion using a timeout (adjust as needed)
-      setTimeout(() => {
-        // Stop transcription after a certain period
-        transcriber.stopTranscribingAsync();
+      // Wait for the specified duration
+      await new Promise(resolve => setTimeout(resolve, audioDuration * 1000));
 
-        // Send accumulated results
-        res.json(transcriptResults);
-      }, audioDuration * 1000); // 30 seconds as an example, adjust as needed
+      // Stop transcription
+      transcriber.stopTranscribingAsync();
+
+      // Send accumulated results
+      res.json(transcriptResults);
+
     } catch (error) {
       console.error(`Unexpected error: ${error.message}`);
       res.status(500).json({ error: 'Internal server error' });
