@@ -29,6 +29,8 @@ No more passive watching – ask questions, seek clarifications, and get instant
 ## Challenges we ran into
 Developing a Chrome Extension meant that we had to navigate the numerous constraints and limitations of the Chromium environment. One key hurdle that we had to overcome was making an API call to Azure Cognitive Service for transcribing videos that did not have a transcription. We were instead faced with a Content Security Policy issue that refused to create another service worker. This meant that we had to set up an alternate API of our own using Azure App Service just to bypass the limitation.
 
+Where one issue was closed, another arose. We eventually realized that API calls to Azure services last no longer than 4 minutes. This meant that although the video was still being transcribed, App Service kept sending back Error 500: Internal Server Error for videos that were longer than 4 minutes. Team members [`Sia Chee Zhen`](https://github.com/Sia-WRWD) and [`Ryan Lim Fang Yung`](https://github.com/ConquerorFY) reworked the code, ensuring that a fetch request was made after a the video duration where the transcription would have already been completed.
+
 ## Accomplishments that we're proud of
 As students ourselves, we identified struggles that we were faced with in our university lives and looked to technology to determine solutions for improvement. With the combined effort of the team, we were able to create a fully-functional Chrome Extension that leverages on the strength and capabilities offered by the Azure AI and Database services to provide value for everyday students. Not only did we learn more on developing with Azure, but are also delighted to have come up with a product that we ourselves can use as students.
 
