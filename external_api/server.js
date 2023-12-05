@@ -12,7 +12,7 @@ async function startServer() {
   var status = "pending";
 
   app.use(cors());
-  app.use(bodyParser.raw({ type: 'audio/wav', limit: '50mb' }));
+  app.use(bodyParser.raw({ type: 'audio/wav', limit: '100mb' }));
 
   app.get('/', (req, res) => res.json(({ message: 'Hello ClassInsight' })));
 

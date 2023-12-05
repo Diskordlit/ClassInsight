@@ -92,7 +92,7 @@ export const transcribeVideo = () => {
 
 // Handle video transcript (automatically from video link if detectable) (if not click on the btn-transcribe)
 export const handleTranscriptFromVideoLink = (videoTranscriptLinkElement) => {
-    console.log(videoTranscriptLinkElement);
+    //console.log(videoTranscriptLinkElement);
     if (!videoTranscriptLinkElement) {
         isCloseNeedTranscribeSection(false);
     } else {
@@ -118,7 +118,7 @@ export const handleTranscriptFromVideoLink = (videoTranscriptLinkElement) => {
                         filteredEntries.push(filteredEntry);
                     }
                     // Now, you can work with the filteredEntries array
-                    console.log(filteredEntries);
+                    //console.log(filteredEntries);
                     sendTranscript(filteredEntries);
                 })
                 .catch((error) => {

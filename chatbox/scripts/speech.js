@@ -9,7 +9,7 @@ export const transcribeAudio = async (audioFile, audioDuration) => {
     });
 
     if (audioUploadresponse.ok) {
-      console.log("Audio File Received.");
+      //console.log("Audio File Received.");
       return "Audio File Received";
     } else {
       console.error(`Error: ${audioUploadresponse.status} - ${audioUploadresponse.statusText}`);
@@ -37,7 +37,7 @@ export const getTranscriptResults = async () => {
       const getTranscriptResponseData = await getTranscriptResponse.json();
       const { status, transcriptResults } = getTranscriptResponseData;
 
-      console.log(getTranscriptResponseData);
+      //console.log(getTranscriptResponseData);
 
       if (status === 'pending') {
         // If status is pending, wait for 3 seconds and then call the function again

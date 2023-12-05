@@ -17,7 +17,7 @@ export function formatTimestamp(timestampWithMilliseconds) {
 // Convert Video to Audio
 export async function convertToAudio(videoBlob) {
     const videoFile = new File([videoBlob], "input.mp4", { type: "video/mp4" });
-    console.log(videoFile);
+    //console.log(videoFile);
     let targetAudioFormat = "wav";
     console.log("================================================Converting MP4 to WAV====================================================");
 
