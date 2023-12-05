@@ -1,7 +1,7 @@
 async function startServer() {
   const express = require('express');
   const bodyParser = require('body-parser');
-  const config = require('./config.js');
+  // const config = require('./config.js');
   const { SpeechConfig, AudioConfig, AudioInputStream, ConversationTranscriber } = await import('microsoft-cognitiveservices-speech-sdk');
   const cors = require('cors');
 
@@ -9,7 +9,7 @@ async function startServer() {
   const port = process.env.PORT || 6969;
 
   app.use(cors());
-  app.use(bodyParser.raw({ type: 'audio/wav', limit: '50mb' }));
+  app.use(bodyParser.raw({ type: 'audio/wav', limit: '100mb' }));
 
   app.get('/', (req, res) => res.json(({ message: 'Hello ClassInsight' })));
 
@@ -26,7 +26,7 @@ async function startServer() {
       pushStream.close();
 
       // Set up speech config and audio config
-      const speechConfig = SpeechConfig.fromSubscription(config.AZURE_SPEECH_KEY, config.AZURE_SPEECH_REGION);
+      const speechConfig = SpeechConfig.fromSubscription(process.env.AZURE_SPEECH_KEY, process.env.AZURE_SPEECH_REGION);
       const audioConfig = AudioConfig.fromStreamInput(pushStream);
 
       // Create the conversation transcriber
