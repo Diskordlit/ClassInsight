@@ -82,13 +82,12 @@ async function startServer() {
       });
 
       // // Wait for the specified duration
-      await new Promise(resolve => setTimeout(resolve, audioDuration * 1000));
-
-      // // Stop transcription
-      transcriber.stopTranscribingAsync();
-
-      // // Send accumulated results
-      // res.json(transcriptResults);
+      setTimeout(() => {
+        console.log("Stopping Transcribing...");
+        // // Stop transcription
+        transcriber.stopTranscribingAsync();
+        res.end("end message")
+      }, (audioDuration * 1000));
 
     } catch (error) {
       console.error(`Unexpected error: ${error.message}`);
