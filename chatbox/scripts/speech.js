@@ -1,6 +1,6 @@
 export const transcribeAudio = async (audioFile, audioDuration) => {
   try {
-    const audioUploadresponse = await fetch(`http://localhost:6969/transcribe?audioDuration=${audioDuration}`, {
+    const audioUploadresponse = await fetch(`https://classinsightapi.azurewebsites.net/transcribe?audioDuration=${audioDuration}`, {
       method: 'POST',
       body: audioFile,
       headers: {
@@ -24,7 +24,7 @@ export const transcribeAudio = async (audioFile, audioDuration) => {
 
 export const getTranscriptResults = async () => {
   try {
-    const getTranscriptResponse = await fetch('http://localhost:6969/getTranscriptResults', {
+    const getTranscriptResponse = await fetch('https://classinsightapi.azurewebsites.net/getTranscriptResults', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json', // Set the appropriate content type
