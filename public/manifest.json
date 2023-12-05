@@ -17,6 +17,7 @@
   "host_permissions": [
     "https://classinsight-cosmodbb.documents.azure.com/",
     "https://classinsight-cosmodbb-westus.documents.azure.com/",
+    "https://classinsightapi.azurewebsites.net/*",
     "https://cloudmails-my.sharepoint.com/*",
     "https://cloudmails.sharepoint.com/*"
   ],
