@@ -71,3 +71,4 @@ module.exports = {
 4. https://github.com/Kagami/ffmpeg.js
 5. https://phppot.com/demo/how-to-export-html-to-word-document-with-javascript/
 6. https://learn.microsoft.com/en-in/azure/app-service/quickstart-nodejs?tabs=windows&pivots=development-environment-vscode
+7. You can always come back to collect later instead of waiting.
