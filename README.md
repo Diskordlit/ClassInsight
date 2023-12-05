@@ -8,7 +8,7 @@
 # Project Details
 ClassInsight Pro was submitted as a project for the [Microsoft AI Classroom Hackathon](https://microsoftaiclassroom.devpost.com/). <br>
 It incorporated Azure AI and Database services such as Azure OpenAI, Azure Cosmos DB, Azure Cognitive Services, and Azure App Service.
-Check out our [video](https://youtu.be/_PQHbRLQFLo).
+View our DevPost [page](https://devpost.com/software/classinsight-pro) // Check out our [video](https://youtu.be/_PQHbRLQFLo).
 
 ## Inspiration
 The pandemic had brought about the transition of traditional lectures towards an online medium. This led to classes being recorded on platforms such as Microsoft Stream and so forth which allowed for students to look out for points they may have missed out on by simply watching the lecture recording. However, the abundance of recordings meant that students were overloaded with information. 
