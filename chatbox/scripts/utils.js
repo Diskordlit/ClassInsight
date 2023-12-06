@@ -102,6 +102,20 @@ export const encodeURL = (url) => {
     return encodeURIComponent(url);
 }
 
+export const getOriginalLink = (shareLink) => {
+    const start = shareLink.indexOf('https://cloudmails-my.sharepoint.com');
+    const end = shareLink.indexOf('&nav');
+  
+    if (start !== -1 && end !== -1) {
+      const originalLink = shareLink.slice(start, end);
+      const referrerIndex = shareLink.indexOf('&referrer');
+      const referrer = referrerIndex !== -1 ? shareLink.slice(referrerIndex) : '';
+      return originalLink + referrer;
+    }
+  
+    return shareLink;
+}
+
 export const generateRandomId = (length) => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';

@@ -1,4 +1,4 @@
-import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, formatConversation, isCloseNeedTranscribeSection, showNeedTranscribeWithDelay } from "./utils";
+import { formatTimestamp, convertToAudio, getVideoDuration, setLoadingMessage, formatConversation, isCloseNeedTranscribeSection, showNeedTranscribeWithDelay, getOriginalLink } from "./utils";
 import { sendTranscript } from "./gpt";
 import { transcribeAudio, getTranscriptResults } from "./speech";
 import { getTranscript, saveTranscript } from "./database";
@@ -27,7 +27,9 @@ export const transcribeVideo = () => {
         needTranscribe.style.display = "none";
         loading.style.display = "flex";
         setLoadingMessage("pending", "No Transcripts found, checking if transcript exists..."); //Check if Transcript exists.
-        let transcript = await getTranscript(videoUrl);
+        let formattedVideoUrl = getOriginalLink(videoUrl);
+        console.log(encodeURIComponent(formattedVideoUrl));
+        let transcript = await getTranscript(formattedVideoUrl);
 
         if (!transcript) {
             setLoadingMessage("pending", "No existing Transcripts found, fetching video...");
@@ -48,7 +50,7 @@ export const transcribeVideo = () => {
                                     const newTranscript = await getTranscriptResults();
 
                                     if (newTranscript) {
-                                        await saveTranscript(videoUrl, newTranscript);
+                                        await saveTranscript(formattedVideoUrl, newTranscript);
                                         setLoadingMessage("success", "Successfully Transcribed, Sending context to ClassInsight...");
                                         sendTranscript(newTranscript); //remove loading and everything show Conversation.
                                         setLoadingMessage("success", "Starting Conversation...");
