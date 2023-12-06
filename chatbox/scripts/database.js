@@ -1,6 +1,6 @@
 const { CosmosClient } = require("@azure/cosmos");
 const config = require('./config');
-import { getDbIdFromUrl } from "./utils";
+import { encodeURL, generateRandomId } from "./utils";
 
 // Initialize the Cosmos client
 const endpoint = config.AZURE_COSMODB_ENDPOINT;
@@ -14,7 +14,8 @@ const container = database.container("Transcripts");
 export async function saveTranscript(url, transcript) {
     try {
         const newItem = {
-            id: getDbIdFromUrl(url),
+            transcriptID: generateRandomId(88),
+            encodedURL: encodeURL(url),
             transcript: transcript
         };
 
@@ -24,7 +25,7 @@ export async function saveTranscript(url, transcript) {
         });
 
         // Log the result
-        console.log(`Created item with id: ${createdItem.id}`);
+        console.log(`Created item with id: ${createdItem.transcriptID}`);
     } catch (e) {
         console.log("Save Transcript Error: ", e);
     }
@@ -32,12 +33,23 @@ export async function saveTranscript(url, transcript) {
 
 export async function getTranscript(url) {
     try {
-        const { resources: items } = await container.items.readAll().fetchAll();
-        const readItem = items.find((i) => i.id === getDbIdFromUrl(url));
+        const querySpec = {
+            query: 'SELECT * FROM c WHERE c.encodedURL = @encodedURL',
+            parameters: [
+                { name: '@encodedURL', value: encodeURL(url) }
+            ]
+        };
 
-        // Log the result
-        console.log(`Read item with id: ${readItem.id}`);
-        return readItem;
+        const { resources: items } = await container.items.query(querySpec).fetchAll();
+
+        if (items.length > 0) {
+            const readItem = items[0];
+            console.log(`Read item with id: ${readItem.transcriptID}`);
+            return readItem;
+        } else {
+            console.log(`No item found with encodedURL: ${encodeURL(url)}`);
+            return null;
+        }
     } catch (e) {
         console.log("Get Transcript Error: ", e);
         return false; // item does not exist

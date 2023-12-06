@@ -23,11 +23,11 @@ export const transcribeVideo = () => {
     const needTranscribe = document.querySelector(".need-transcribe");
     const loading = document.getElementById("loading");
 
-    chrome.storage.session.get("videoLink").then(async ({ videoLink }) => {
+    chrome.storage.session.get(["videoLink", "videoUrl"]).then(async ({ videoLink, videoUrl }) => {
         needTranscribe.style.display = "none";
         loading.style.display = "flex";
         setLoadingMessage("pending", "No Transcripts found, checking if transcript exists..."); //Check if Transcript exists.
-        let transcript = await getTranscript(videoLink);
+        let transcript = await getTranscript(videoUrl);
 
         if (!transcript) {
             setLoadingMessage("pending", "No existing Transcripts found, fetching video...");
@@ -48,7 +48,7 @@ export const transcribeVideo = () => {
                                     const newTranscript = await getTranscriptResults();
 
                                     if (newTranscript) {
-                                        await saveTranscript(videoLink, newTranscript);
+                                        await saveTranscript(videoUrl, newTranscript);
                                         setLoadingMessage("success", "Successfully Transcribed, Sending context to ClassInsight...");
                                         sendTranscript(newTranscript); //remove loading and everything show Conversation.
                                         setLoadingMessage("success", "Starting Conversation...");

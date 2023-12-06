@@ -32,7 +32,8 @@ export const setVideoTranscriptLink = () => {
 // Set video transcript link onto chrome session
 export const setStreamVideoLink = () => {
     let videoLink = document.querySelector("video").src;
-    chrome.storage.session.set({ videoLink: videoLink });
+    let videoUrl = window.location.href
+    chrome.storage.session.set({ videoLink: videoLink, videoUrl: videoUrl });
 }
 
 // Check whether video exists

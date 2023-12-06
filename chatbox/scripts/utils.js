@@ -94,8 +94,24 @@ export const turnOffLoadingMessage = () => {
     loadingMessage.style.display = "none";
 }
 
-export const getDbIdFromUrl = (url) => {
-    return btoa(url).replace(/\//g, '*').replace(/\=/g, '`').slice(30, 100);
+// export const getDbIdFromUrl = (url) => {
+//     return btoa(url).replace(/\//g, '*').replace(/\=/g, '`').slice(30, 100);
+// }
+
+export const encodeURL = (url) => {
+    return encodeURIComponent(url);
+}
+
+export const generateRandomId = (length) => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        result += chars.charAt(randomIndex);
+    }
+
+    return result;
 }
 
 export const isCloseNeedTranscribeSection = (isClose) => {
