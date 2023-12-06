@@ -25,7 +25,7 @@ export async function saveTranscript(url, transcript) {
         });
 
         // Log the result
-        console.log(`Created item with id: ${createdItem.transcriptID}`);
+        //console.log(`Created item with id: ${createdItem.transcriptID}`);
     } catch (e) {
         console.log("Save Transcript Error: ", e);
     }

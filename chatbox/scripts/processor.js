@@ -28,7 +28,7 @@ export const transcribeVideo = () => {
         loading.style.display = "flex";
         setLoadingMessage("pending", "No Transcripts found, checking if transcript exists..."); //Check if Transcript exists.
         let formattedVideoUrl = getOriginalLink(videoUrl);
-        console.log(encodeURIComponent(formattedVideoUrl));
+        //console.log(encodeURIComponent(formattedVideoUrl));
         let transcript = await getTranscript(formattedVideoUrl);
 
         if (!transcript) {
